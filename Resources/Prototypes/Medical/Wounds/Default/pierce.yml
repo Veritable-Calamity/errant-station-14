@@ -1,0 +1,43 @@
+﻿- type: entity
+  id: DeepBruise
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: MinorBreakage
+  components:
+  - type: Wound
+    hpDamage: 2
+    integrityDamage: 0
+    severityPercentage: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: OpenPuncture
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: RupturedCavity
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0

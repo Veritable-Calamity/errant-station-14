@@ -1,0 +1,43 @@
+﻿- type: entity
+  id: FirstDegreeBurn
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: SecondDegreeBurn
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: ThirdDegreeBurn
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+- type: entity
+  id: FourthDegreeBurn
+  components:
+  - type: Wound
+    hpDamage: 2
+    int: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0

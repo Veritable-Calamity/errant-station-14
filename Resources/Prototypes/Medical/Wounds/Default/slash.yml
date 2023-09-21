@@ -1,0 +1,43 @@
+﻿- type: entity
+  id: Welt
+  components:
+  - type: Wound
+    hpDamage: 2
+    intDamage: 0
+    severity: 100
+    baseHealingRate: 0.05
+    healingModifier: 0
+    healingMultiplier: 1.0
+
+  - type: entity
+    id: RoughAbrasion
+    components:
+    - type: Wound
+      hpDamage: 2
+      intDamage: 0
+      severity: 100
+      baseHealingRate: 0.05
+      healingModifier: 0
+      healingMultiplier: 1.0
+
+  - type: entity
+    id: OpenLaceration
+    components:
+    - type: Wound
+      hpDamage: 2
+      intDamage: 0
+      severity: 100
+      baseHealingRate: 0.05
+      healingModifier: 0
+      healingMultiplier: 1.0
+
+  - type: entity
+    id: WeepingAvulsion
+    components:
+    - type: Wound
+      healthDamage: 2
+      intDamage: 0
+      severity: 100
+      baseHealingRate: 0.05
+      healingModifier: 0
+      healingMultiplier: 1.0

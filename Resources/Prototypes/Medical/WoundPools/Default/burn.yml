@@ -1,0 +1,7 @@
+﻿- type: trauma
+  id: Burn
+  wounds:
+    5: FirstDegreeBurn
+    25: SecondDegreeBurn
+    55: ThirdDegreeBurn
+    85: FourthDegreeBurn
