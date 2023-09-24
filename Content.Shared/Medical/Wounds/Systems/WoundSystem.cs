@@ -28,6 +28,7 @@ public partial class WoundSystem : EntitySystem
     {
         SubscribeLocalEvent<WoundableComponent, RejuvenateEvent>(OnWoundableRejuvenate);
         InitWounding();
+        InitDamage();
     }
 
 

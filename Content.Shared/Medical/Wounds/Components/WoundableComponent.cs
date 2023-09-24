@@ -11,12 +11,8 @@ namespace Content.Shared.Medical.Wounds.Components;
 public sealed partial class WoundableComponent : Component //Component that holds wound system configuration data  for a specific entity
 {
     [AutoNetworkedField] public EntityUid? ParentWoundable;
-    [AutoNetworkedField] public EntityUid? WoundableRoot;
-
+    [AutoNetworkedField] public EntityUid RootWoundable;
     [ViewVariables] public HashSet<EntityUid> ChildWoundables = new();
-
-    [ViewVariables] public HashSet<EntityUid>? ActiveAttachedWoundables;
-
     /// <summary>
     /// Should we allow wounds to be created on this woundable. This is usually set to false on root woundables ie: body entity.
     /// This is also useful if you want to have an unwoundable part between woundable parts to relay damage across!
@@ -28,29 +24,34 @@ public sealed partial class WoundableComponent : Component //Component that hold
     /// </summary>
     [AutoNetworkedField,  DataField("damageScaling")]
     public FixedPoint2 DamageScaling = 1;
-    //TODO: write validator
-    [AutoNetworkedField, DataField("damageGroupPools",
-         customTypeSerializer:typeof(PrototypeIdDictionarySerializer<string,DamageTypePrototype>), required:true)]
-    public Dictionary<string, string> WoundGroupPools = new();
 
-    [AutoNetworkedField, DataField("damageTypePools",
+    //TODO Resistances!
+
+    //TODO: write validator
+
+    /// <summary>
+    /// WoundPools for damage types
+    /// </summary>
+    [AutoNetworkedField, DataField("woundPools",
          customTypeSerializer:typeof(PrototypeIdDictionarySerializer<string,DamageTypePrototype>), required:true)]
-    public Dictionary<string, string> WoundTypePools = new();
+    public Dictionary<string, string> WoundPools = new();
 
     [ViewVariables] public Container Wounds;
 
-    [AutoNetworkedField] public FixedPoint2 HitpointCapMax = 0;
-    [DataField("hitPointsCap", required: true), AutoNetworkedField]
-    public FixedPoint2 HitPointCap = 90;
+    [DataField("hitPointsCap", required: true),AutoNetworkedField]
+    public FixedPoint2 HitpointCapMax = 90;
+    [AutoNetworkedField]public FixedPoint2 HitPointCap = -1;
 
     [DataField("hitPoints"), AutoNetworkedField] public FixedPoint2 HitPoints = -1;
-
-    [AutoNetworkedField] public FixedPoint2 IntegrityCap = 0;
 
     [DataField("integrityCap", required: true), AutoNetworkedField]
     public FixedPoint2 IntegrityCapMax = 10;
 
+    [AutoNetworkedField] public FixedPoint2 IntegrityCap = -1;
+
     [DataField("integrity"), AutoNetworkedField]
     public FixedPoint2 Integrity = -1;
     public FixedPoint2 TotalHp => HitPoints + Integrity;
+    public FixedPoint2 TotalCap => HitPointCap + IntegrityCap;
+    public FixedPoint2 TotalCapMax => HitpointCapMax + IntegrityCapMax;
 }

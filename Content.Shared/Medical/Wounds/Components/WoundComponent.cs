@@ -8,7 +8,7 @@ namespace Content.Shared.Medical.Wounds.Components;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class WoundComponent : Component
 {
-    [AutoNetworkedField] public EntityUid OwningWoundable;
+    [AutoNetworkedField] public EntityUid ParentWoundable;
 
     [DataField("scarWound", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>)), AutoNetworkedField]
     public string? ScarWound;

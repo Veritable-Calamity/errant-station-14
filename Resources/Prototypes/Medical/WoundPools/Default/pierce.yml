@@ -1,4 +1,4 @@
-﻿- type: trauma
+﻿- type: woundPool
   id: Pierce
   wounds:
     10: DeepBruise

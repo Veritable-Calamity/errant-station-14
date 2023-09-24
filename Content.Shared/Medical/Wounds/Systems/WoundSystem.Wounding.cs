@@ -1,6 +1,12 @@
-﻿using Content.Shared.Damage;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Content.Shared.Damage;
+using Content.Shared.FixedPoint;
 using Content.Shared.Medical.Wounds.Components;
+using Content.Shared.Medical.Wounds.Prototypes;
 using Robust.Shared.Containers;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Toolshed.TypeParsers;
 
 namespace Content.Shared.Medical.Wounds.Systems;
 
@@ -10,65 +16,104 @@ public partial class WoundSystem
     private void InitWounding()
     {
         SubscribeLocalEvent<WoundableComponent, ComponentInit>(OnWoundableInit);
-        SubscribeLocalEvent<WoundableComponent, ComponentShutdown>(OnWoundableShutdown);
-        SubscribeLocalEvent<WoundableComponent, DamageChangedEvent>(OnWoundableDamaged);
-        SubscribeLocalEvent<WoundableComponent, DamageChangedEvent>(OnWoundableDamaged);
         SubscribeLocalEvent<WoundableComponent, EntInsertedIntoContainerMessage>(OnWoundableInserted);
         SubscribeLocalEvent<WoundableComponent, EntRemovedFromContainerMessage>(OnWoundableRemoved);
         SubscribeLocalEvent<WoundComponent, EntInsertedIntoContainerMessage>(OnWoundInserted);
         SubscribeLocalEvent<WoundComponent, EntRemovedFromContainerMessage>(OnWoundRemoved);
     }
-
     private void OnWoundableInit(EntityUid entity, WoundableComponent component,  ComponentInit args)
     {
         component.Wounds = _container.EnsureContainer<Container>(entity,WoundContainerId);
         if (component.HitPoints < 0)
-            component.HitPoints = component.HitPointCap;
+            component.HitPoints = component.HitpointCapMax;
         if (component.Integrity < 0)
             component.Integrity = component.IntegrityCapMax;
         component.IntegrityCap = component.IntegrityCapMax;
-        component.HitpointCapMax = component.HitPointCap;
-    }
-
-    private void OnWoundableShutdown(EntityUid child, WoundableComponent woundable, ComponentShutdown args)
-    {
-        if (woundable.ParentWoundable == null)
-            return;
-        RemoveWoundableFromParent(child, woundable.ParentWoundable.Value, woundable);
+        component.HitPointCap = component.HitpointCapMax;
     }
 
 
-    private void OnWoundableDamaged(EntityUid target, WoundableComponent woundable,  DamageChangedEvent args)
-    {
 
+    public bool TrySpawnWound(EntityUid target, string woundProtoId, [NotNullWhen(true)] out (EntityUid, WoundComponent)? woundData,
+        WoundableComponent? woundable = null)
+    {
+        woundData = null;
+        if (!Resolve(target, ref woundable) || !_net.IsServer) //This should not run on the client
+            return false;
+
+        var woundEntity = SpawnAttachedTo(woundProtoId, Comp<TransformComponent>(target).Coordinates);
+        if (!TryComp<WoundComponent>(woundEntity, out var woundComp))
+        {
+            Del(woundEntity);
+            Log.Error($"Tried to create wound from entity prototype without a wound component: {woundProtoId}");
+            return false;
+        }
+
+        if (!AddWound(target, woundEntity, woundable, woundComp))
+        {
+            Log.Error($"something went wrong adding wound {woundEntity} to woundable {target}");
+            return false;
+        }
+        woundData = (woundEntity, woundComp);
+        return true;
+    }
+
+
+
+    public string? GetWoundPoolFromDamageType(EntityUid target, string damageType, WoundableComponent? woundable)
+    {
+        if (!Resolve(target, ref woundable) || !woundable.AllowWounds)
+            return null;
+        woundable.WoundPools.TryGetValue(damageType, out var protoId);
+        return protoId;
+    }
+
+    public string GetWoundProtoFromDamage(string woundPoolId, FixedPoint2 percentDamage)
+    {
+        var woundPool = _prototype.Index<WoundPoolPrototype>(woundPoolId);
+        var lastProtoId = woundPool.Wounds.Last().Value;
+        if (percentDamage > 100)
+            return lastProtoId;
+        foreach (var (threshold, protoId) in woundPool.Wounds)
+        {
+            if (threshold > percentDamage)
+                return lastProtoId;
+            lastProtoId = protoId;
+
+        }
+        return lastProtoId;
     }
 
     public bool IsWoundableRoot(EntityUid woundableEntity, WoundableComponent? woundable = null)
     {
-        return Resolve(woundableEntity, ref woundable) && woundable.WoundableRoot == woundableEntity;
+        return Resolve(woundableEntity, ref woundable) && woundable.RootWoundable == woundableEntity;
     }
 
-    private void OnWoundRemoved(EntityUid woundEntity, WoundComponent wound, EntRemovedFromContainerMessage args)
+    private void OnWoundRemoved(EntityUid woundableEntity, WoundComponent wound, EntRemovedFromContainerMessage args)
     {
-        if (wound.OwningWoundable == EntityUid.Invalid)
+        if (wound.ParentWoundable == EntityUid.Invalid)
             return;
-        var ev = new WoundRemovedEvent(woundEntity,wound,Comp<WoundableComponent>(wound.OwningWoundable).WoundableRoot);
-        RaiseLocalEvent(wound.OwningWoundable, ref ev, true);
-        var ev2 = new WoundRemovedEvent(woundEntity,wound,Comp<WoundableComponent>(wound.OwningWoundable).WoundableRoot);
-        RaiseLocalEvent(woundEntity, ref ev2);
-        wound.OwningWoundable = EntityUid.Invalid;
+        var rootWoundable = Comp<WoundableComponent>(wound.ParentWoundable).RootWoundable;
+        wound.ParentWoundable = EntityUid.Invalid;
+        var ev = new WoundRemovedEvent(args.Entity,wound,rootWoundable);
+        RaiseLocalEvent(args.Entity, ref ev);
+        var ev2 = new WoundRemovedEvent(args.Entity,wound,rootWoundable);
+        RaiseLocalEvent(rootWoundable, ref ev2, true);
+
         if (_net.IsServer)
-            Del(woundEntity);
+            Del(woundableEntity);
     }
 
-    private void OnWoundInserted(EntityUid woundEntity, WoundComponent wound, EntInsertedIntoContainerMessage args)
+    private void OnWoundInserted(EntityUid woundableEntity, WoundComponent wound, EntInsertedIntoContainerMessage args)
     {
-        if (wound.OwningWoundable != EntityUid.Invalid)
+        if (wound.ParentWoundable != EntityUid.Invalid)
             return;
-        var ev = new WoundAddedEvent(woundEntity,wound,Comp<WoundableComponent>(wound.OwningWoundable).WoundableRoot);
-        RaiseLocalEvent(wound.OwningWoundable, ref ev, true);
-        var ev2 = new WoundAddedEvent(woundEntity,wound,Comp<WoundableComponent>(wound.OwningWoundable).WoundableRoot);
-        RaiseLocalEvent(woundEntity, ref ev2);
+        var rootWoundable = Comp<WoundableComponent>(wound.ParentWoundable).RootWoundable;
+        var ev = new WoundAddedEvent(args.Entity,wound,rootWoundable);
+        RaiseLocalEvent(args.Entity, ref ev);
+        var ev2 = new WoundAddedEvent(args.Entity,wound,rootWoundable);
+        RaiseLocalEvent(rootWoundable, ref ev2, true);
+
     }
 
     protected bool AddWound(EntityUid woundableEntity, EntityUid woundEntity , WoundableComponent? woundable = null,
@@ -77,7 +122,7 @@ public partial class WoundSystem
         if (!Resolve(woundableEntity, ref woundable)
             || !Resolve(woundEntity, ref wound) || !woundable.Wounds.Contains(woundEntity))
             return false;
-        wound.OwningWoundable = woundableEntity;
+        wound.ParentWoundable = woundableEntity;
         Dirty(woundableEntity, woundable);
         return woundable.Wounds.Insert(woundEntity);
     }
@@ -85,92 +130,156 @@ public partial class WoundSystem
     protected bool RemoveWound(EntityUid woundEntity, WoundComponent? wound = null)
     {
         if (!Resolve(woundEntity, ref wound)
-                                || !TryComp(wound.OwningWoundable, out WoundableComponent? woundable))
+                                || !TryComp(wound.ParentWoundable, out WoundableComponent? woundable))
             return false;
-        return woundable.Wounds.Remove(wound.OwningWoundable);
+        return woundable.Wounds.Remove(wound.ParentWoundable);
     }
 
     #region WoundableLogic
 
-    /// <summary>
-    /// Attaches a woundable to a woundable, and updates the woundable hierarchy.
-    /// NOTE: This is automatically handled for bodyparts or if you use containers!
-    /// </summary>
-    /// <param name="parentEntity">parent entity we want to attach to</param>
-    /// <param name="childEntity">the child woundable entity</param>
-    /// <param name="parentWoundable">parent woundable component</param>
-    /// <param name="childWoundable">child woundable component</param>
-    /// <returns>true if successful</returns>
-    public bool AttachWoundableToParent(EntityUid parentEntity, EntityUid childEntity,
+    private void FixWoundableRoots(EntityUid targetEntity, WoundableComponent targetWoundable)
+    {
+        foreach (var (childEntity, childWoundable) in GetAllWoundableChildren(targetEntity, targetWoundable))
+        {
+            childWoundable.RootWoundable = targetWoundable.RootWoundable;
+            Dirty(childEntity, childWoundable);
+        }
+        Dirty(targetEntity, targetWoundable);
+    }
+
+    protected void InternalAddWoundableToParent(EntityUid parentEntity, EntityUid childEntity,
+        WoundableComponent parentWoundable, WoundableComponent childWoundable)
+    {
+        parentWoundable.ChildWoundables.Add(childEntity);
+        childWoundable.ParentWoundable = parentEntity;
+        childWoundable.RootWoundable = parentWoundable.RootWoundable;
+        FixWoundableRoots(childEntity, childWoundable);
+        foreach (var (woundId, wound) in GetAllWounds(childEntity, childWoundable))
+        {
+            var ev = new WoundAddedEvent(woundId, wound, childWoundable.RootWoundable);
+            RaiseLocalEvent(woundId, ref ev);
+            var ev2 = new WoundAddedEvent(woundId, wound, childWoundable.RootWoundable);
+            RaiseLocalEvent(childWoundable.RootWoundable, ref ev2, true);
+        }
+        Dirty(childEntity, childWoundable);
+    }
+
+    protected void InternalRemoveWoundableFromParent(EntityUid parentEntity, EntityUid childEntity,
+        WoundableComponent parentWoundable, WoundableComponent childWoundable)
+    {
+        parentWoundable.ChildWoundables.Remove(childEntity);
+        childWoundable.ParentWoundable = null;
+        childWoundable.RootWoundable = childEntity;
+        FixWoundableRoots(childEntity, childWoundable);
+        foreach (var (woundId, wound) in GetAllWounds(childEntity, childWoundable))
+        {
+            var ev = new WoundRemovedEvent(woundId, wound, childWoundable.RootWoundable);
+            RaiseLocalEvent(woundId, ref ev);
+            var ev2 = new WoundRemovedEvent(woundId, wound, childWoundable.RootWoundable);
+            RaiseLocalEvent(childWoundable.RootWoundable, ref ev2, true);
+        }
+        Dirty(childEntity, childWoundable);
+
+    }
+
+    public bool RemoveWoundableFromParent(EntityUid parentEntity, EntityUid childEntity,
         WoundableComponent? parentWoundable = null, WoundableComponent? childWoundable = null)
     {
-        if (!Resolve(parentEntity, ref parentWoundable) || !Resolve(childEntity, ref childWoundable) ||
-            childWoundable.ParentWoundable != null || parentWoundable.WoundableRoot == null)
+        if (!Resolve(parentEntity, ref parentWoundable) || !Resolve(childEntity, ref childWoundable) || childWoundable.ParentWoundable == null)
             return false;
-        childWoundable.WoundableRoot = parentWoundable.WoundableRoot;
-        parentWoundable.ChildWoundables.Add(childEntity);
-        //Only add this woundable to the active list on the root if if (childWoundable.AllowWounds)
-        {
-            var woundableRoot = Comp<WoundableComponent>(parentWoundable.WoundableRoot.Value);
-            woundableRoot.ActiveAttachedWoundables ??= new HashSet<EntityUid>();
-            woundableRoot.ActiveAttachedWoundables.Add(childEntity);
-        }
+        InternalRemoveWoundableFromParent(parentEntity, childEntity, parentWoundable, childWoundable);
         return true;
     }
 
-    /// <summary>
-    /// Removes a woundable from a woundable, and updates the woundable hierarchy.
-    /// NOTE: This is automatically handled for bodyparts or if you use containers!
-    /// </summary>
-    /// <param name="childEntity">the child woundable we wish to remove</param>
-    /// <param name="parentEntity">the entity we are removing the child from</param>
-    /// <param name="childWoundable">child woundable component</param>
-    /// <returns>true if successful</returns>
-    public bool RemoveWoundableFromParent(EntityUid childEntity, EntityUid parentEntity, WoundableComponent? childWoundable = null)
+    public bool AddWoundableToParent(EntityUid parentEntity, EntityUid childEntity,
+        WoundableComponent? parentWoundable = null, WoundableComponent? childWoundable = null)
     {
-        if (!Resolve(childEntity, ref childWoundable) || childWoundable.ParentWoundable == null || childWoundable.WoundableRoot == null)
+        if (!Resolve(parentEntity, ref parentWoundable) || !Resolve(childEntity, ref childWoundable) || childWoundable.ParentWoundable == null)
             return false;
-        var parentWoundable = Comp<WoundableComponent>(parentEntity);
-        var rootWoundable = Comp<WoundableComponent>(childWoundable.WoundableRoot.Value);
-        childWoundable.ParentWoundable = null;
-        var output = false;
-        if (rootWoundable.ActiveAttachedWoundables != null)
-            output = rootWoundable.ActiveAttachedWoundables.Remove(childEntity);
-        return parentWoundable.ChildWoundables.Remove(childEntity) && output;
+        InternalAddWoundableToParent(parentEntity, childEntity, parentWoundable, childWoundable);
+        return true;
     }
 
-    private void OnWoundableRemoved(EntityUid child, WoundableComponent childWoundable, EntRemovedFromContainerMessage args)
+    public IEnumerable<(EntityUid, WoundableComponent)> GetAllWoundableChildren(EntityUid targetEntity,
+        WoundableComponent? targetWoundable = null)
     {
-        if (!TryComp<WoundableComponent>(args.Container.Owner, out var parentWoundable))
-            return;
-        RemoveWoundableFromParent(child, args.Container.Owner, childWoundable);
-        foreach (var woundEntity in childWoundable.Wounds.ContainedEntities)
+        if (!Resolve(targetEntity, ref targetWoundable))
+            yield break;
+
+        foreach (var childEntity in targetWoundable.ChildWoundables)
         {
-            var wound = Comp<WoundComponent>(woundEntity);
-            var ev = new WoundAddedEvent(woundEntity, wound, parentWoundable.WoundableRoot);
-            RaiseLocalEvent(woundEntity, ref ev);
-            if (parentWoundable.WoundableRoot == null)
+            if (!TryComp(childEntity, out WoundableComponent? childWoundable))
                 continue;
-            var ev2 = new WoundAddedEvent(woundEntity, wound, parentWoundable.WoundableRoot);
-            RaiseLocalEvent(parentWoundable.WoundableRoot.Value, ref ev2, true);
+            foreach (var value in GetAllWoundableChildren(childEntity, childWoundable))
+            {
+                yield return value;
+            }
         }
     }
 
-    private void OnWoundableInserted(EntityUid child, WoundableComponent childWoundable, EntInsertedIntoContainerMessage args)
+    public IEnumerable<(EntityUid, WoundComponent)> GetAllWounds(EntityUid targetEntity,
+        WoundableComponent? targetWoundable = null)
+    {
+        if (!Resolve(targetEntity, ref targetWoundable))
+            yield break;
+        foreach (var (_, childWoundable) in GetAllWoundableChildren(targetEntity, targetWoundable))
+        {
+            foreach (var woundEntity in childWoundable.Wounds.ContainedEntities)
+            {
+                yield return (woundEntity, Comp<WoundComponent>(woundEntity));
+            }
+        }
+    }
+
+
+    public bool TryGetRandomActiveChildWoundable(EntityUid targetEntity, [NotNullWhen(true)] out (EntityUid,
+        WoundableComponent)? childWoundable, WoundableComponent? targetWoundable = null)
+    {
+        childWoundable = GetRandomActiveChildWoundable(targetEntity, targetWoundable);
+        return childWoundable != null;
+    }
+
+    public (EntityUid, WoundableComponent)? GetRandomActiveChildWoundable(EntityUid targetEntity, WoundableComponent? targetWoundable = null)
+    {
+        if (!Resolve(targetEntity, ref targetWoundable))
+            return null;
+        (EntityUid, WoundableComponent) testVal = (targetEntity, targetWoundable);
+
+        if (targetWoundable.ChildWoundables.Count == 0)
+        {
+            if (targetWoundable.AllowWounds)
+                return testVal;
+            return null;
+        }
+
+        const int attemptLimit = 20;
+        const float settleChance = 0.3f;
+        var attempts = 0;
+        while (attempts <= attemptLimit)
+        {
+            attempts++;
+            if (testVal.Item2.AllowWounds && _random.NextDouble() < settleChance || testVal.Item2.ChildWoundables.Count == 0)
+            {
+                break;
+            }
+            var foundEntity = testVal.Item2.ChildWoundables.ElementAt(_random.Next(0, testVal.Item2.ChildWoundables.Count));
+            testVal = (foundEntity, Comp<WoundableComponent>(foundEntity));
+        }
+        return testVal;
+    }
+
+    private void OnWoundableRemoved(EntityUid parentEntity, WoundableComponent childWoundable, EntRemovedFromContainerMessage args)
     {
         if (!TryComp<WoundableComponent>(args.Container.Owner, out var parentWoundable))
             return;
-        AttachWoundableToParent(args.Container.Owner, child, parentWoundable, childWoundable);
-        foreach (var woundEntity in childWoundable.Wounds.ContainedEntities)
-        {
-            var wound = Comp<WoundComponent>(woundEntity);
-            var ev = new WoundAddedEvent(woundEntity, wound, childWoundable.WoundableRoot);
-            RaiseLocalEvent(woundEntity, ref ev);
-            if (childWoundable.WoundableRoot == null)
-                continue;
-            var ev2 = new WoundAddedEvent(woundEntity, wound, childWoundable.WoundableRoot);
-            RaiseLocalEvent(childWoundable.WoundableRoot.Value, ref ev2, true);
-        }
+        InternalRemoveWoundableFromParent(parentEntity, args.Entity, parentWoundable, childWoundable);
+    }
+
+    private void OnWoundableInserted(EntityUid parentEntity, WoundableComponent childWoundable, EntInsertedIntoContainerMessage args)
+    {
+        if (!TryComp<WoundableComponent>(args.Container.Owner, out var parentWoundable))
+            return;
+        InternalAddWoundableToParent(parentEntity, args.Entity, parentWoundable, childWoundable);
     }
 
     #endregion

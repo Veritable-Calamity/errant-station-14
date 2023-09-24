@@ -1,4 +1,4 @@
-﻿- type: trauma
+﻿- type: woundPool
   id: Slash
   wounds:
     10: Welt
