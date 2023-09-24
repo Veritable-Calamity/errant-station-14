@@ -8,10 +8,21 @@ namespace Content.Shared.Medical.Wounds.Components;
 
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-public sealed partial class ConditionComponent : Component //Component that holds wound system configuration data  for a specific entity
+public sealed partial class WoundableComponent : Component //Component that holds wound system configuration data  for a specific entity
 {
     [AutoNetworkedField] public EntityUid? ParentWoundable;
-    [DataField("allowRootWounds")] public bool AllowRootWounds;
+    [AutoNetworkedField] public EntityUid? WoundableRoot;
+
+    [ViewVariables] public HashSet<EntityUid> ChildWoundables = new();
+
+    [ViewVariables] public HashSet<EntityUid>? ActiveAttachedWoundables;
+
+    /// <summary>
+    /// Should we allow wounds to be created on this woundable. This is usually set to false on root woundables ie: body entity.
+    /// This is also useful if you want to have an unwoundable part between woundable parts to relay damage across!
+    /// If this is set, all damage checks/hp values are ignored and the values are passed on to child woundables (or ignored!)
+    /// </summary>
+    [DataField("allowWounds")] public bool AllowWounds;
     /// <summary>
     /// How much to scale damage when applying wounds
     /// </summary>
@@ -26,9 +37,7 @@ public sealed partial class ConditionComponent : Component //Component that hold
          customTypeSerializer:typeof(PrototypeIdDictionarySerializer<string,DamageTypePrototype>), required:true)]
     public Dictionary<string, string> WoundTypePools = new();
 
-    [AutoNetworkedField] public HashSet<EntityUid> WoundEntities = new();
-    [ViewVariables] public Container WoundContainer;
-    [ViewVariables] public Container ChildWoundables;
+    [ViewVariables] public Container Wounds;
 
     [AutoNetworkedField] public FixedPoint2 HitpointCapMax = 0;
     [DataField("hitPointsCap", required: true), AutoNetworkedField]

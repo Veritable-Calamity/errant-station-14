@@ -20,10 +20,10 @@ namespace Content.Server.Body.Systems
             base.Initialize();
 
             SubscribeLocalEvent<BrainComponent, AddedToBodyEvent>((uid, _, args) => HandleMind(args.Body, uid));
-            SubscribeLocalEvent<BrainComponent, AddedToPartEvent>((uid, _, args) => HandleMind(args.Part, uid));
+            SubscribeLocalEvent<BrainComponent, OrganAddedEvent>((uid, _, args) => HandleMind(args.Part, uid));
             SubscribeLocalEvent<BrainComponent, AddedToPartInBodyEvent>((uid, _, args) => HandleMind(args.Body, uid));
             SubscribeLocalEvent<BrainComponent, RemovedFromBodyEvent>(OnRemovedFromBody);
-            SubscribeLocalEvent<BrainComponent, RemovedFromPartEvent>((uid, _, args) => HandleMind(uid, args.Old));
+            SubscribeLocalEvent<BrainComponent, OrganRemovedEvent>((uid, _, args) => HandleMind(uid, args.OrganEntity));
             SubscribeLocalEvent<BrainComponent, RemovedFromPartInBodyEvent>((uid, _, args) => HandleMind(args.OldBody, uid));
         }
 

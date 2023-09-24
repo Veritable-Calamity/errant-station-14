@@ -1,4 +1,5 @@
 ﻿using Content.Shared.Body.Components;
+using Content.Shared.Body.Events;
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.FixedPoint;
@@ -19,8 +20,8 @@ public sealed class ConsciousnessSystem : EntitySystem
     public override void Initialize()
     {
         SubscribeLocalEvent<ConsciousnessComponent, MapInitEvent>(OnConsciousnessMapInit);
-        SubscribeLocalEvent<ConsciousnessRequiredComponent, BodyPartDestroyed>(OnBodyPartDestroyed);
-        SubscribeLocalEvent<ConsciousnessRequiredComponent, OrganDestroyedEvent>(OnOrganDestroyed);
+        SubscribeLocalEvent<ConsciousnessRequiredComponent, BodyPartRemovedEvent>(OnBodyPartRemoved);
+        SubscribeLocalEvent<ConsciousnessRequiredComponent, OrganRemovedEvent>(OnOrganRemoved);
         SubscribeLocalEvent<ConsciousnessRequiredComponent, ComponentInit>(OnConsciousnessPartInit);
         SubscribeLocalEvent<ConsciousnessRequiredComponent, BodyPartAddedEvent>(OnBodyPartAdded);
         SubscribeLocalEvent<ConsciousnessComponent, ComponentGetState>(OnComponentGet);
@@ -118,7 +119,7 @@ public sealed class ConsciousnessSystem : EntitySystem
         }
     }
 
-    private void OnOrganDestroyed(EntityUid uid, ConsciousnessRequiredComponent component, ref OrganDestroyedEvent args)
+    private void OnOrganRemoved(EntityUid uid, ConsciousnessRequiredComponent component, OrganRemovedEvent args)
     {
         if (args.Organ.Body == null || !TryComp<ConsciousnessComponent>(args.Organ.Body.Value, out var consciousness))
             return;
@@ -132,7 +133,7 @@ public sealed class ConsciousnessSystem : EntitySystem
         CheckRequiredParts(args.Organ.Body.Value, consciousness);
     }
 
-    private void OnBodyPartDestroyed(EntityUid uid, ConsciousnessRequiredComponent component, ref BodyPartDestroyed args)
+    private void OnBodyPartRemoved(EntityUid uid, ConsciousnessRequiredComponent component, ref BodyPartRemovedEvent args)
     {
         if (args.Part.Body == null || !TryComp<ConsciousnessComponent>(args.Part.Body.Value, out var consciousness))
             return;
