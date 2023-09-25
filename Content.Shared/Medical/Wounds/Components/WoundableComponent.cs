@@ -2,17 +2,18 @@
 using Content.Shared.FixedPoint;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
+using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.Dictionary;
 
 namespace Content.Shared.Medical.Wounds.Components;
 
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class WoundableComponent : Component //Component that holds wound system configuration data  for a specific entity
 {
-    [AutoNetworkedField] public EntityUid? ParentWoundable;
-    [AutoNetworkedField] public EntityUid RootWoundable;
-    [ViewVariables] public HashSet<EntityUid> ChildWoundables = new();
+    [ViewVariables, AutoNetworkedField] public EntityUid? ParentWoundable;
+    [ViewVariables, AutoNetworkedField] public EntityUid RootWoundable;
+    [ViewVariables, AutoNetworkedField] public HashSet<EntityUid> ChildWoundables = new();
     /// <summary>
     /// Should we allow wounds to be created on this woundable. This is usually set to false on root woundables ie: body entity.
     /// This is also useful if you want to have an unwoundable part between woundable parts to relay damage across!
@@ -32,26 +33,49 @@ public sealed partial class WoundableComponent : Component //Component that hold
     /// <summary>
     /// WoundPools for damage types
     /// </summary>
-    [AutoNetworkedField, DataField("woundPools",
+    [DataField("woundPools",
          customTypeSerializer:typeof(PrototypeIdDictionarySerializer<string,DamageTypePrototype>), required:true)]
     public Dictionary<string, string> WoundPools = new();
 
-    [ViewVariables] public Container Wounds;
+    [ViewVariables] public Container? Wounds;
 
-    [DataField("hitPointsCap", required: true),AutoNetworkedField]
-    public FixedPoint2 HitpointCapMax = 90;
-    [AutoNetworkedField]public FixedPoint2 HitPointCap = -1;
+    [DataField("hitPointsCap", required: true)]
+    public FixedPoint2 HitPointCapMax = 90;
+    public FixedPoint2 HitPointCap = -1;
 
-    [DataField("hitPoints"), AutoNetworkedField] public FixedPoint2 HitPoints = -1;
+    [DataField("hitPoints")] public FixedPoint2 HitPoints = -1;
 
-    [DataField("integrityCap", required: true), AutoNetworkedField]
+    [DataField("integrityCap", required: true)]
     public FixedPoint2 IntegrityCapMax = 10;
 
-    [AutoNetworkedField] public FixedPoint2 IntegrityCap = -1;
+    public FixedPoint2 IntegrityCap = -1;
 
-    [DataField("integrity"), AutoNetworkedField]
-    public FixedPoint2 Integrity = -1;
+    [DataField("integrity")] public FixedPoint2 Integrity = -1;
+
+    public WoundableComponent(Container wounds)
+    {
+        Wounds = wounds;
+    }
+
     public FixedPoint2 TotalHp => HitPoints + Integrity;
     public FixedPoint2 TotalCap => HitPointCap + IntegrityCap;
-    public FixedPoint2 TotalCapMax => HitpointCapMax + IntegrityCapMax;
+    public FixedPoint2 TotalCapMax => HitPointCapMax + IntegrityCapMax;
+}
+
+[Serializable, NetSerializable]
+public sealed class WoundableComponentState : ComponentState
+{
+    public NetEntity? ParentWoundable = default!;
+    public NetEntity RootWoundable = default!;
+    public HashSet<NetEntity> ChildWoundables = default!;
+    public FixedPoint2 DamageScaling = default!;
+    public Dictionary<string, string> WoundPools = default!;
+    public string Wounds = default!;
+    public bool AllowWounds = default!;
+    public FixedPoint2 HitPointCapMax = default!;
+    public FixedPoint2 HitPointCap = default!;
+    public FixedPoint2 HitPoints = default!;
+    public FixedPoint2 IntegrityCapMax = default!;
+    public FixedPoint2 IntegrityCap = default!;
+    public FixedPoint2 Integrity = default!;
 }

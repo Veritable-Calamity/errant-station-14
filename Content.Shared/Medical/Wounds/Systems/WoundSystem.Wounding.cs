@@ -6,6 +6,7 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Medical.Wounds.Components;
 using Content.Shared.Medical.Wounds.Prototypes;
 using Robust.Shared.Containers;
+using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Toolshed.TypeParsers;
 
@@ -21,16 +22,64 @@ public partial class WoundSystem
         SubscribeLocalEvent<WoundableComponent, EntRemovedFromContainerMessage>(OnWoundableRemoved);
         SubscribeLocalEvent<WoundComponent, EntInsertedIntoContainerMessage>(OnWoundInserted);
         SubscribeLocalEvent<WoundComponent, EntRemovedFromContainerMessage>(OnWoundRemoved);
+        SubscribeLocalEvent<WoundableComponent, ComponentGetState>(OnWoundableGetState);
+        SubscribeLocalEvent<WoundableComponent, ComponentHandleState>(OnWoundableHandleState);
     }
+
+    private void OnWoundableHandleState(EntityUid uid, WoundableComponent component, ref ComponentHandleState args)
+    {
+        if (args.Current is not WoundableComponentState state)
+            return;
+        component.HitPoints = state.HitPoints;
+        component.HitPointCap = state.HitPointCap;
+        component.HitPointCapMax = state.HitPointCapMax;
+        component.Integrity = state.Integrity;
+        component.IntegrityCap = state.IntegrityCap;
+        component.IntegrityCapMax = state.IntegrityCapMax;
+        component.Wounds = _container.EnsureContainer<Container>(uid, state.Wounds);
+        component.AllowWounds = state.AllowWounds;
+        component.DamageScaling = state.DamageScaling;
+        component.RootWoundable = GetEntity(state.RootWoundable);
+        component.ParentWoundable = GetEntity(state.ParentWoundable);
+        component.ChildWoundables.Clear();
+        foreach (var netEntity in state.ChildWoundables)
+        {
+            component.ChildWoundables.Add(GetEntity(netEntity));
+        }
+    }
+
+    private void OnWoundableGetState(EntityUid uid, WoundableComponent component, ref ComponentGetState args)
+    {
+        var state = new WoundableComponentState
+        {
+            HitPoints = component.HitPoints,
+            HitPointCap = component.HitPointCap,
+            HitPointCapMax = component.HitPointCapMax,
+            Integrity = component.Integrity,
+            IntegrityCap = component.IntegrityCap,
+            IntegrityCapMax = component.IntegrityCapMax,
+            Wounds = component.Wounds!.ID,
+            AllowWounds = component.AllowWounds,
+            DamageScaling = component.DamageScaling,
+            RootWoundable = GetNetEntity(component.RootWoundable),
+            ParentWoundable = GetNetEntity(component.ParentWoundable),
+            ChildWoundables = new HashSet<NetEntity>()
+        };
+        foreach (var entity in component.ChildWoundables)
+        {
+            state.ChildWoundables.Add(GetNetEntity(entity));
+        }
+    }
+
     private void OnWoundableInit(EntityUid entity, WoundableComponent component,  ComponentInit args)
     {
         component.Wounds = _container.EnsureContainer<Container>(entity,WoundContainerId);
         if (component.HitPoints < 0)
-            component.HitPoints = component.HitpointCapMax;
+            component.HitPoints = component.HitPointCapMax;
         if (component.Integrity < 0)
             component.Integrity = component.IntegrityCapMax;
         component.IntegrityCap = component.IntegrityCapMax;
-        component.HitPointCap = component.HitpointCapMax;
+        component.HitPointCap = component.HitPointCapMax;
     }
 
     public bool TrySpawnWound(EntityUid target, ProtoId<EntityPrototype> woundProtoId, out (EntityUid, WoundComponent) woundData,
@@ -40,7 +89,8 @@ public partial class WoundSystem
         if (!Resolve(target, ref woundable) || !_net.IsServer) //This should not run on the client
             return false;
 
-        var woundEntity = SpawnAttachedTo(woundProtoId, Comp<TransformComponent>(target).Coordinates);
+        var woundEntity = Spawn(woundProtoId);
+        _transform.SetParent(woundEntity, target);
         if (!TryComp<WoundComponent>(woundEntity, out var woundComp))
         {
             Del(woundEntity);
@@ -70,10 +120,10 @@ public partial class WoundSystem
         return protoId;
     }
 
-    public ProtoId<EntityPrototype> GetWoundProtoFromDamage(ProtoId<WoundPoolPrototype> woundPoolId, FixedPoint2 percentDamage)
+    public ProtoId<EntityPrototype>? GetWoundProtoFromDamage(ProtoId<WoundPoolPrototype> woundPoolId, FixedPoint2 percentDamage)
     {
-        var woundPool = _prototype.Index<WoundPoolPrototype>(woundPoolId);
-        var lastProtoId = woundPool.Wounds.Last().Value;
+        var woundPool = _prototype.Index(woundPoolId);
+        ProtoId<EntityPrototype>? lastProtoId = null;
         if (percentDamage > 100)
             return lastProtoId;
         foreach (var (threshold, protoId) in woundPool.Wounds)
@@ -81,7 +131,6 @@ public partial class WoundSystem
             if (threshold > percentDamage)
                 return lastProtoId;
             lastProtoId = protoId;
-
         }
         return lastProtoId;
     }
@@ -122,7 +171,7 @@ public partial class WoundSystem
         WoundComponent? wound = null)
     {
         if (!Resolve(woundableEntity, ref woundable)
-            || !Resolve(woundEntity, ref wound) || woundable.Wounds.Contains(woundEntity))
+            || !Resolve(woundEntity, ref wound) || woundable.Wounds!.Contains(woundEntity))
             return false;
         wound.ParentWoundable = woundableEntity;
         Dirty(woundableEntity, woundable);
@@ -134,13 +183,15 @@ public partial class WoundSystem
         if (!Resolve(woundEntity, ref wound)
                                 || !TryComp(wound.ParentWoundable, out WoundableComponent? woundable))
             return false;
-        return woundable.Wounds.Remove(wound.ParentWoundable);
+        return woundable.Wounds!.Remove(wound.ParentWoundable);
     }
 
     #region WoundableLogic
 
     private void FixWoundableRoots(EntityUid targetEntity, WoundableComponent targetWoundable)
     {
+        if (targetWoundable.ChildWoundables.Count == 0)
+            return;
         foreach (var (childEntity, childWoundable) in GetAllWoundableChildren(targetEntity, targetWoundable))
         {
             childWoundable.RootWoundable = targetWoundable.RootWoundable;
@@ -217,16 +268,17 @@ public partial class WoundSystem
                 yield return value;
             }
         }
+        yield return (targetEntity, targetWoundable);
     }
 
     public IEnumerable<(EntityUid, WoundComponent)> GetAllWounds(EntityUid targetEntity,
         WoundableComponent? targetWoundable = null)
     {
-        if (!Resolve(targetEntity, ref targetWoundable))
+        if (!Resolve(targetEntity, ref targetWoundable) || targetWoundable.Wounds!.Count == 0)
             yield break;
         foreach (var (_, childWoundable) in GetAllWoundableChildren(targetEntity, targetWoundable))
         {
-            foreach (var woundEntity in childWoundable.Wounds.ContainedEntities)
+            foreach (var woundEntity in childWoundable.Wounds!.ContainedEntities)
             {
                 yield return (woundEntity, Comp<WoundComponent>(woundEntity));
             }
@@ -270,16 +322,16 @@ public partial class WoundSystem
         return testVal;
     }
 
-    private void OnWoundableRemoved(EntityUid parentEntity, WoundableComponent childWoundable, EntRemovedFromContainerMessage args)
+    private void OnWoundableRemoved(EntityUid parentEntity, WoundableComponent parentWoundable, EntRemovedFromContainerMessage args)
     {
-        if (!TryComp<WoundableComponent>(args.Container.Owner, out var parentWoundable))
+        if (_net.IsClient || !TryComp<WoundableComponent>(args.Entity, out var childWoundable))
             return;
         InternalRemoveWoundableFromParent(parentEntity, args.Entity, parentWoundable, childWoundable);
     }
 
-    private void OnWoundableInserted(EntityUid parentEntity, WoundableComponent childWoundable, EntInsertedIntoContainerMessage args)
+    private void OnWoundableInserted(EntityUid parentEntity, WoundableComponent parentWoundable, EntInsertedIntoContainerMessage args)
     {
-        if (!TryComp<WoundableComponent>(args.Container.Owner, out var parentWoundable))
+        if (_net.IsClient || !TryComp<WoundableComponent>(args.Entity, out var childWoundable))
             return;
         InternalAddWoundableToParent(parentEntity, args.Entity, parentWoundable, childWoundable);
     }

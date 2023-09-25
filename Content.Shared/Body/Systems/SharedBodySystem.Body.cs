@@ -5,6 +5,7 @@ using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.Body.Prototypes;
 using Content.Shared.DragDrop;
+using Content.Shared.Random.Helpers;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
@@ -26,7 +27,6 @@ public partial class SharedBodySystem
         // Body here to handle root body parts.
         SubscribeLocalEvent<BodyComponent, EntInsertedIntoContainerMessage>(OnBodyInserted);
         SubscribeLocalEvent<BodyComponent, EntRemovedFromContainerMessage>(OnBodyRemoved);
-
         SubscribeLocalEvent<BodyComponent, ComponentInit>(OnBodyInit);
         SubscribeLocalEvent<BodyComponent, MapInitEvent>(OnBodyMapInit);
         SubscribeLocalEvent<BodyComponent, CanDragEvent>(OnBodyCanDrag);
@@ -287,12 +287,55 @@ public partial class SharedBodySystem
         }
     }
 
+
+    public virtual HashSet<EntityUid> GibPart(EntityUid bodyPartId, bool gibOrgans = false,
+        BodyPartComponent? bodyPart = null, bool deleteItems = false, bool deleteRoot = false,
+        bool gibRootOrgans = false, float spreadVelocity = 0.01f)
+    {
+        var gibs = new HashSet<EntityUid>();
+        if (!Resolve(bodyPartId, ref bodyPart, false))
+            return gibs;
+        if (bodyPart.Body != null && TryComp<BodyComponent>(bodyPart.Body, out var body) && body.RootContainer.ContainedEntity == bodyPartId)
+        {
+            gibs = GibBody(bodyPart.Body.Value, gibOrgans, body, deleteItems, deleteRoot, gibRootOrgans,spreadVelocity);
+            return gibs;
+        }
+
+        var parts = GetBodyPartChildren(bodyPartId, bodyPart).ToArray();
+        gibs.EnsureCapacity(parts.Length);
+        foreach (var part in parts)
+        {
+            SharedTransform.AttachToGridOrMap(part.Id);
+            gibs.Add(part.Id);
+
+            if (!gibOrgans)
+                continue;
+
+            foreach (var organ in GetPartOrgans(part.Id, part.Component))
+            {
+                SharedTransform.AttachToGridOrMap(organ.Id);
+                gibs.Add(organ.Id);
+            }
+        }
+
+        if (!gibOrgans && gibRootOrgans)
+        {
+            foreach (var (organId,_) in GetPartOrgans(bodyPartId, bodyPart))
+            {
+                SharedTransform.AttachToGridOrMap(organId);
+                gibs.Add(organId);
+            }
+        }
+        return gibs;
+    }
+
     public virtual HashSet<EntityUid> GibBody(EntityUid bodyId, bool gibOrgans = false,
-        BodyComponent? body = null, bool deleteItems = false)
+        BodyComponent? body = null, bool deleteItems = false, bool deleteRoot = false, bool gibRootOrgans = false,
+        float spreadVelocity = 0.01f)
     {
         var gibs = new HashSet<EntityUid>();
 
-        if (!Resolve(bodyId, ref body, false))
+        if (!Resolve(bodyId, ref body, false) || body.RootContainer.ContainedEntity == null)
             return gibs;
 
         var parts = GetBodyChildren(bodyId, body).ToArray();
@@ -312,7 +355,14 @@ public partial class SharedBodySystem
                 gibs.Add(organ.Id);
             }
         }
-
+        if (!gibOrgans && gibRootOrgans)
+        {
+            foreach (var (organId,_) in GetPartOrgans(body.RootContainer.ContainedEntity.Value))
+            {
+                SharedTransform.AttachToGridOrMap(organId);
+                gibs.Add(organId);
+            }
+        }
         return gibs;
     }
 }

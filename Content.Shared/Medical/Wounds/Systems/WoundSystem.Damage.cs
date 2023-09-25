@@ -1,4 +1,7 @@
-﻿using Content.Shared.Damage;
+﻿using System.Linq;
+using Content.Shared.Body.Components;
+using Content.Shared.Body.Part;
+using Content.Shared.Damage;
 using Content.Shared.FixedPoint;
 using Content.Shared.Medical.Wounds.Components;
 
@@ -10,7 +13,26 @@ public partial class WoundSystem
     private void InitDamage()
     {
         SubscribeLocalEvent<WoundableComponent, DamageChangedEvent>(OnWoundableDamaged);
-        SubscribeLocalEvent<WoundableComponent, DamageChangedEvent>(OnWoundableDamaged);
+        SubscribeLocalEvent<BodyComponent, DamageChangedEvent>(OnBodyDamaged);
+    }
+
+    private void OnBodyDamaged(EntityUid target, BodyComponent component, DamageChangedEvent args)
+    {
+        if (component.RootContainer.ContainedEntity == null
+            || !TryComp<WoundableComponent>(component.RootContainer.ContainedEntity, out var rootWoundable))
+            return;
+        if (args.DamageDelta == null)
+        {
+            Log.Warning($"Tried to set damage directly on {target} to {component.RootContainer.ContainedEntity} " +
+                      $"{rootWoundable} directly setting damage on woundable entities will not spawn wounds!");
+            return;
+        }
+        if (_damageable.TryChangeDamage(component.RootContainer.ContainedEntity, args.DamageDelta,
+                interruptsDoAfters: args.InterruptsDoAfters, origin: args.Origin) != null)
+            return;
+        Log.Error($"Failed to relay damage to a woundable entity " +
+                  $"{component.RootContainer.ContainedEntity} that does NOT have a damagable component. " +
+                  $"This is required for wounds to function!");
     }
 
     private void OnWoundableDamaged(EntityUid target, WoundableComponent woundable,  DamageChangedEvent args)
@@ -45,11 +67,11 @@ public partial class WoundSystem
 
     protected void ApplyDamageAndCreateWounds(EntityUid target, WoundableComponent woundable, DamageSpecifier damage)
     {
-        if (ApplyWoundableDamage(target, woundable, damage, out var overflow))
-        {
-            //TODO: implement bodypart destruction and damage overflow to surrounding parts
-        }
+        if (_net.IsClient)
+            return;
+        ApplyWoundableDamage(target, woundable, damage);
 
+        //Create wounds for each woundable
         foreach (var (damageType, rawDamage) in damage.DamageDict)
         {
             var woundPool = GetWoundPoolFromDamageType(target, damageType, woundable);
@@ -57,32 +79,46 @@ public partial class WoundSystem
                 continue;
             var woundProtoId =
                 GetWoundProtoFromDamage(woundPool, CalculateWoundPercentDamage(target, rawDamage, woundable));
-            if (!TrySpawnWound(target, woundProtoId, out var data))
+            if (woundProtoId == null)
+                return;
+            if (!TrySpawnWound(target, woundProtoId.Value, out var data))
             {
                 Log.Error("Wound Creation failed!");
             }
         }
     }
 
-    private bool ApplyWoundableDamage(EntityUid target, WoundableComponent woundable, DamageSpecifier damage,
-        out FixedPoint2 overflow)
+    private void ApplyWoundableDamage(EntityUid target, WoundableComponent woundable, DamageSpecifier damage)
     {
-        overflow = 0;
-        woundable.HitPoints -= woundable.DamageScaling * damage.Total; //TODO factor in resistances when they get implemented
+        var totalAdjDmg = woundable.DamageScaling * damage.Total;
+
+        if (totalAdjDmg < 0)
+            return;//TODO: write healing logic. For now this will have no effect!
+
+        woundable.HitPoints -= totalAdjDmg; //TODO factor in resistances when they get implemented
         if (woundable.HitPoints < 0)
         {
-            woundable.Integrity -= woundable.HitPoints;
+            woundable.Integrity += woundable.HitPoints;
             woundable.HitPoints = 0;
             if (woundable.Integrity < 0)
             {
-                overflow = -woundable.Integrity;
+                var overflow = -woundable.Integrity;
                 woundable.Integrity = 0;
-                //TODO: Destroy the wound and part here!
-                return true;
+                Dirty(target, woundable);
+                DestroyWoundable(target, woundable, damage, overflow / totalAdjDmg);
+                return;
             }
         }
         Dirty(target, woundable);
-        return false;
+        return;
+    }
+
+    private void DestroyWoundable(EntityUid woundableEntity, WoundableComponent woundable, DamageSpecifier originalDamage, FixedPoint2 percentOverflow)
+    {
+        if (TryComp<BodyPartComponent>(woundableEntity, out var bodyPart))
+        {
+            _body.GibPart(woundableEntity, false, bodyPart, false, true, true);
+        }
     }
 
     public FixedPoint2 CalculateWoundPercentDamage(EntityUid target, FixedPoint2 damage, WoundableComponent? woundable)

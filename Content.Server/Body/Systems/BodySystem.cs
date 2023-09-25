@@ -15,10 +15,12 @@ using Content.Shared.Mind;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Events;
 using Content.Shared.Random.Helpers;
+using Content.Shared.Throwing;
 using Robust.Shared.Audio;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
 using Robust.Shared.Player;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -31,9 +33,10 @@ public sealed class BodySystem : SharedBodySystem
     [Dependency] private readonly HumanoidAppearanceSystem _humanoidSystem = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly ThrowingSystem _throwing = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedMindSystem _mindSystem = default!;
-
     public override void Initialize()
     {
         base.Initialize();
@@ -116,10 +119,97 @@ public sealed class BodySystem : SharedBodySystem
         _humanoidSystem.SetLayersVisibility(bodyUid, layers, false, true, humanoid);
     }
 
-    public override HashSet<EntityUid> GibBody(EntityUid bodyId, bool gibOrgans = false, BodyComponent? body = null, bool deleteItems = false)
+
+    public override HashSet<EntityUid> GibPart(EntityUid bodyPartId, bool gibOrgans = false,
+        BodyPartComponent? bodyPart = null, bool deleteItems = false, bool deleteRoot = false,
+        bool gibRootOrgans = false, float spreadVelocity = 0.01f)
     {
-        if (!Resolve(bodyId, ref body, false))
+        var gibs = new HashSet<EntityUid>();
+        if (!Resolve(bodyPartId, ref bodyPart, false))
+            return gibs;
+
+        if (bodyPart.Body != null && TryComp<BodyComponent>(bodyPart.Body, out var rootBody) && rootBody.RootContainer.ContainedEntity == bodyPartId)
+        {
+            gibs = GibBody(bodyPart.Body.Value, gibOrgans, rootBody, deleteItems, deleteRoot, gibRootOrgans,spreadVelocity);
+            return gibs;
+        }
+        if (LifeStage(bodyPartId) >= EntityLifeStage.Terminating || EntityManager.IsQueuedForDeletion(bodyPartId))
             return new HashSet<EntityUid>();
+
+        var xform = Transform(bodyPartId);
+        if (xform.MapUid == null)
+            return new HashSet<EntityUid>();
+
+        gibs = base.GibPart(bodyPartId, gibOrgans, bodyPart, deleteItems);
+        var coordinates = xform.Coordinates;
+        var filter = Filter.Pvs(bodyPartId, entityManager: EntityManager);
+        var audio = AudioParams.Default.WithVariation(0.025f);
+
+        if (bodyPart.Body != null && TryComp<BodyComponent>(bodyPart.Body.Value, out var body))
+        {
+            _audio.Play(body.GibSound, filter, coordinates, true, audio);
+        }
+
+        var containers = GetPartContainers(bodyPartId,bodyPart).ToList();
+
+        foreach (var container in containers)
+        {
+            foreach (var entity in container.ContainedEntities)
+            {
+                if (deleteItems)
+                {
+                    QueueDel(entity);
+                }
+                else
+                {
+                    container.Remove(entity, EntityManager, force: true);
+                    SharedTransform.SetCoordinates(entity,coordinates);
+                    entity.RandomOffset(0.25f);
+                    if (spreadVelocity > 0)
+                    {
+                        _throwing.TryThrow(entity,
+                            _random.NextVector2(), spreadVelocity+_random.NextFloat(0, 0.5f*spreadVelocity), playSound: false);
+                    }
+                }
+            }
+        }
+
+        if (!gibOrgans && gibRootOrgans)
+        {
+            foreach (var (_, data) in bodyPart.Organs)
+            {
+                var organSlot = (ContainerSlot) Containers.GetContainer(bodyPartId, data.Id);
+                if (organSlot.ContainedEntity == null)
+                    continue;
+                organSlot.Remove(organSlot.ContainedEntity.Value, EntityManager, force: true);
+                SharedTransform.SetCoordinates(organSlot.ContainedEntity.Value,coordinates);
+                organSlot.ContainedEntity.Value.RandomOffset(0.25f);
+                if (spreadVelocity > 0)
+                {
+                    _throwing.TryThrow(organSlot.ContainedEntity.Value,
+                        _random.NextVector2(),spreadVelocity+_random.NextFloat(0,0.5f*spreadVelocity), playSound:false);
+                }
+            }
+        }
+
+        if (!deleteItems && deleteRoot)
+        {
+            QueueDel(bodyPartId);
+        }
+        RaiseLocalEvent(bodyPartId, new BeingGibbedEvent(gibs));
+        QueueDel(bodyPartId);
+        return gibs;
+    }
+
+    public override HashSet<EntityUid> GibBody(EntityUid bodyId, bool gibOrgans = false, BodyComponent? body = null,
+        bool deleteItems = false, bool deleteRoot = false, bool gibRootOrgans = false,
+        float spreadVelocity = 0.01f)
+    {
+        if (!Resolve(bodyId, ref body, false) || body.RootContainer.ContainedEntity == null)
+            return new HashSet<EntityUid>();
+
+        var rootBodyPart = Comp<BodyPartComponent>(body.RootContainer.ContainedEntity.Value);
+        var rootBodyPartId = body.RootContainer.ContainedEntity.Value;
 
         if (LifeStage(bodyId) >= EntityLifeStage.Terminating || EntityManager.IsQueuedForDeletion(bodyId))
             return new HashSet<EntityUid>();
@@ -151,9 +241,30 @@ public sealed class BodySystem : SharedBodySystem
                     container.Remove(entity, EntityManager, force: true);
                     SharedTransform.SetCoordinates(entity,coordinates);
                     entity.RandomOffset(0.25f);
+                    if (spreadVelocity > 0)
+                    {
+                        _throwing.TryThrow(entity,
+                            _random.NextVector2(),spreadVelocity+_random.NextFloat(0,0.5f*spreadVelocity), playSound:false);
+                    }
                 }
             }
         }
+
+        if (!gibOrgans && gibRootOrgans)
+        {
+            foreach (var (organId, organ) in GetPartOrgans(rootBodyPartId, rootBodyPart))
+            {
+                RemoveOrgan(organId, organ);
+                SharedTransform.SetCoordinates(organId,coordinates);
+                organId.RandomOffset(0.25f);
+                if (spreadVelocity > 0)
+                {
+                    _throwing.TryThrow(organId,
+                        _random.NextVector2(),spreadVelocity+_random.NextFloat(0,0.5f*spreadVelocity), playSound:false);
+                }
+            }
+        }
+
         RaiseLocalEvent(bodyId, new BeingGibbedEvent(gibs));
         QueueDel(bodyId);
 

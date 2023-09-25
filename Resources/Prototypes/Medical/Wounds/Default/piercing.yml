@@ -14,8 +14,8 @@
   components:
   - type: Wound
     hpDamage: 2
-    integrityDamage: 0
-    severityPercentage: 100
+    intDamage: 0
+    severity: 100
     baseHealingRate: 0.05
     healingModifier: 0
     healingMultiplier: 1.0
