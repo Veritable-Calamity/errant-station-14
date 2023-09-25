@@ -24,7 +24,7 @@ public partial class WoundSystem
 
         if (woundable.AllowWounds)
         {
-            //TODO: apply damage to this woundable specifically
+            ApplyDamageAndCreateWounds(target, woundable, args.DamageDelta);
             return;
         }
 
@@ -37,22 +37,31 @@ public partial class WoundSystem
 
         var childEntity = data.Value.Item1;
         if (_damageable.TryChangeDamage(childEntity, args.DamageDelta,
-                interruptsDoAfters: args.InterruptsDoAfters, origin:args.Origin) == null)
-        {
-            Log.Error($"Failed to relay damage to a woundable entity {childEntity} that does NOT have a damagable component. " +
-                      $"This is required for wounds to function!");
+                interruptsDoAfters: args.InterruptsDoAfters, origin: args.Origin) != null)
             return;
-        }
+        Log.Error($"Failed to relay damage to a woundable entity {childEntity} that does NOT have a damagable component. " +
+                  $"This is required for wounds to function!");
     }
 
-    protected void ApplyDamageAndCreateWounds(EntityUid target, WoundableComponent woundable, DamageSpecifier damage, EntityUid? origin)
+    protected void ApplyDamageAndCreateWounds(EntityUid target, WoundableComponent woundable, DamageSpecifier damage)
     {
         if (ApplyWoundableDamage(target, woundable, damage, out var overflow))
         {
             //TODO: implement bodypart destruction and damage overflow to surrounding parts
         }
 
-
+        foreach (var (damageType, rawDamage) in damage.DamageDict)
+        {
+            var woundPool = GetWoundPoolFromDamageType(target, damageType, woundable);
+            if (woundPool == null)
+                continue;
+            var woundProtoId =
+                GetWoundProtoFromDamage(woundPool, CalculateWoundPercentDamage(target, rawDamage, woundable));
+            if (!TrySpawnWound(target, woundProtoId, out var data))
+            {
+                Log.Error("Wound Creation failed!");
+            }
+        }
     }
 
     private bool ApplyWoundableDamage(EntityUid target, WoundableComponent woundable, DamageSpecifier damage,

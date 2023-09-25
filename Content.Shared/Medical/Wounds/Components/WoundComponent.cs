@@ -20,7 +20,7 @@ public sealed partial class WoundComponent : Component
     public FixedPoint2 IntegrityDamage;
 
     [DataField("severity"), AutoNetworkedField]
-    public FixedPoint2 SeverityPercent;
+    public FixedPoint2 SeverityPercent = 100;
 
     public FixedPoint2 Severity => SeverityPercent / 100;
 

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Prototypes;
 using Content.Shared.FixedPoint;
 using Content.Shared.Medical.Wounds.Components;
 using Content.Shared.Medical.Wounds.Prototypes;
@@ -32,12 +33,10 @@ public partial class WoundSystem
         component.HitPointCap = component.HitpointCapMax;
     }
 
-
-
-    public bool TrySpawnWound(EntityUid target, string woundProtoId, [NotNullWhen(true)] out (EntityUid, WoundComponent)? woundData,
+    public bool TrySpawnWound(EntityUid target, ProtoId<EntityPrototype> woundProtoId, out (EntityUid, WoundComponent) woundData,
         WoundableComponent? woundable = null)
     {
-        woundData = null;
+        woundData = default;
         if (!Resolve(target, ref woundable) || !_net.IsServer) //This should not run on the client
             return false;
 
@@ -48,19 +47,22 @@ public partial class WoundSystem
             Log.Error($"Tried to create wound from entity prototype without a wound component: {woundProtoId}");
             return false;
         }
-
         if (!AddWound(target, woundEntity, woundable, woundComp))
         {
             Log.Error($"something went wrong adding wound {woundEntity} to woundable {target}");
             return false;
         }
         woundData = (woundEntity, woundComp);
+#if DEBUG
+        var woundMeta = Comp<MetaDataComponent>(woundEntity);
+        Log.Verbose($"Wound: {woundEntity} of type: {woundMeta.EntityPrototype?.Name} Created on {target}");
+#endif
         return true;
     }
 
 
 
-    public string? GetWoundPoolFromDamageType(EntityUid target, string damageType, WoundableComponent? woundable)
+    public string? GetWoundPoolFromDamageType(EntityUid target, ProtoId<DamageTypePrototype> damageType, WoundableComponent? woundable)
     {
         if (!Resolve(target, ref woundable) || !woundable.AllowWounds)
             return null;
@@ -68,7 +70,7 @@ public partial class WoundSystem
         return protoId;
     }
 
-    public string GetWoundProtoFromDamage(string woundPoolId, FixedPoint2 percentDamage)
+    public ProtoId<EntityPrototype> GetWoundProtoFromDamage(ProtoId<WoundPoolPrototype> woundPoolId, FixedPoint2 percentDamage)
     {
         var woundPool = _prototype.Index<WoundPoolPrototype>(woundPoolId);
         var lastProtoId = woundPool.Wounds.Last().Value;
@@ -120,7 +122,7 @@ public partial class WoundSystem
         WoundComponent? wound = null)
     {
         if (!Resolve(woundableEntity, ref woundable)
-            || !Resolve(woundEntity, ref wound) || !woundable.Wounds.Contains(woundEntity))
+            || !Resolve(woundEntity, ref wound) || woundable.Wounds.Contains(woundEntity))
             return false;
         wound.ParentWoundable = woundableEntity;
         Dirty(woundableEntity, woundable);
