@@ -18,6 +18,17 @@
   - type: Tag
     tags:
       - Trash
+  - type: Woundable
+    hitPointsCap: 90
+    integrityCap: 10
+    woundPools:
+      Blunt: "DefaultBlunt"
+      Piercing: "DefaultPiercing"
+      Slash: "DefaultSlash"
+      Heat: "DefaultHeat"
+      Cold: "DefaultCold"
+      Caustic: "DefaultCaustic"
+      Radiation: "DefaultRadiation"
 
 - type: entity
   id: BaseTorso

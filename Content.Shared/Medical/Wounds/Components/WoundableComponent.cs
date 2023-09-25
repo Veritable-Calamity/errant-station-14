@@ -18,7 +18,7 @@ public sealed partial class WoundableComponent : Component //Component that hold
     /// This is also useful if you want to have an unwoundable part between woundable parts to relay damage across!
     /// If this is set, all damage checks/hp values are ignored and the values are passed on to child woundables (or ignored!)
     /// </summary>
-    [DataField("allowWounds")] public bool AllowWounds;
+    [DataField("allowWounds")] public bool AllowWounds = true;
     /// <summary>
     /// How much to scale damage when applying wounds
     /// </summary>

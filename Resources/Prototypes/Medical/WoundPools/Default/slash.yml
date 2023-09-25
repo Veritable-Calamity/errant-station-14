@@ -1,5 +1,5 @@
 ﻿- type: woundPool
-  id: Slash
+  id: DefaultSlash
   wounds:
     10: Welt
     30: RoughAbrasion

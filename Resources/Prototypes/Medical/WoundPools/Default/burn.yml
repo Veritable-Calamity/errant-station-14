@@ -1,5 +1,5 @@
 ﻿- type: woundPool
-  id: Heat
+  id: DefaultHeat
   wounds:
     5: FirstDegreeBurn
     25: SecondDegreeBurn
@@ -7,7 +7,7 @@
     85: FourthDegreeBurn
 
 - type: woundPool
-  id: Cold
+  id: DefaultCold
   wounds:
     5: FirstDegreeFrostBurn
     25: SecondDegreeFrostBurn
@@ -15,7 +15,7 @@
     85: FourthDegreeFrostBurn
 
 - type: woundPool
-  id: Caustic
+  id: DefaultCaustic
   wounds:
     5: FirstDegreeChemBurn
     25: SecondDegreeChemBurn
@@ -23,7 +23,7 @@
     85: FourthDegreeChemBurn
 
 - type: woundPool
-  id: Radiation
+  id: DefaultRadiation
   wounds:
     5: FirstDegreeRadBurn
     25: SecondDegreeRadBurn
