@@ -1,0 +1,23 @@
+﻿- type: entity
+  parent: FirstDegreeBurnBase
+  id: FirstDegreeRadBurn
+  components:
+  - type: Wound
+
+- type: entity
+  parent: SecondDegreeBurnBase
+  id: SecondDegreeRadBurn
+  components:
+  - type: Wound
+
+- type: entity
+  parent: ThirdDegreeBurnBase
+  id: ThirdDegreeRadBurn
+  components:
+  - type: Wound
+
+- type: entity
+  parent: FourthDegreeBurnBase
+  id: FourthDegreeRadBurn
+  components:
+  - type: Wound

@@ -1,5 +1,5 @@
 ﻿- type: woundPool
-  id: Pierce
+  id: Piercing
   wounds:
     10: DeepBruise
     30: MinorBreakage

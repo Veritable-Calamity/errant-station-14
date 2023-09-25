@@ -1,5 +1,6 @@
 ﻿- type: entity
-  id: FirstDegreeBurn
+  abstract: true
+  id: FirstDegreeBurnBase
   components:
   - type: Wound
     hpDamage: 2
@@ -10,7 +11,8 @@
     healingMultiplier: 1.0
 
 - type: entity
-  id: SecondDegreeBurn
+  abstract: true
+  id: SecondDegreeBurnBase
   components:
   - type: Wound
     hpDamage: 2
@@ -21,7 +23,8 @@
     healingMultiplier: 1.0
 
 - type: entity
-  id: ThirdDegreeBurn
+  abstract: true
+  id: ThirdDegreeBurnBase
   components:
   - type: Wound
     hpDamage: 2
@@ -32,7 +35,8 @@
     healingMultiplier: 1.0
 
 - type: entity
-  id: FourthDegreeBurn
+  abstract: true
+  id: FourthDegreeBurnBase
   components:
   - type: Wound
     hpDamage: 2
