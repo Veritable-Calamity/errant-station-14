@@ -117,7 +117,11 @@ public partial class WoundSystem
     {
         if (TryComp<BodyPartComponent>(woundableEntity, out var bodyPart))
         {
-            _body.GibPart(woundableEntity, false, bodyPart, false, true, true);
+            if (bodyPart.Body != null && TryComp<BodyComponent>(bodyPart.Body.Value, out var body)
+                                      && _body.IsPartRoot(bodyPart.Body.Value, woundableEntity, body, bodyPart))
+            {
+                _body.GibBody(bodyPart.Body.Value, true, body);
+            }
         }
     }
 

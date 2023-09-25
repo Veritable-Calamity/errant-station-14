@@ -19,8 +19,8 @@
     tags:
       - Trash
   - type: Woundable
-    hitPointsCap: 90
-    integrityCap: 10
+    hpCap: 90
+    intCap: 10
     woundPools:
       Blunt: "DefaultBlunt"
       Piercing: "DefaultPiercing"
@@ -37,6 +37,9 @@
   components:
   - type: BodyPart
     partType: Torso
+  - type: Woundable
+    hpCap: 150
+    intCap: 150
 
 - type: entity
   id: BaseHead

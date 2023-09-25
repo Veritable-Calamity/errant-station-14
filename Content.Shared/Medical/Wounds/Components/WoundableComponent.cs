@@ -39,18 +39,16 @@ public sealed partial class WoundableComponent : Component //Component that hold
 
     [ViewVariables] public Container? Wounds;
 
-    [DataField("hitPointsCap", required: true)]
-    public FixedPoint2 HitPointCapMax = 90;
+    [DataField("hpCap", required: true)]public FixedPoint2 HitPointCapMax;
     public FixedPoint2 HitPointCap = -1;
 
-    [DataField("hitPoints")] public FixedPoint2 HitPoints = -1;
+    [DataField("hp")] public FixedPoint2 HitPoints = -1;
 
-    [DataField("integrityCap", required: true)]
-    public FixedPoint2 IntegrityCapMax = 10;
+    [DataField("intCap", required: true)]public FixedPoint2 IntegrityCapMax;
 
     public FixedPoint2 IntegrityCap = -1;
 
-    [DataField("integrity")] public FixedPoint2 Integrity = -1;
+    [DataField("int")] public FixedPoint2 Integrity = -1;
 
     public WoundableComponent(Container wounds)
     {

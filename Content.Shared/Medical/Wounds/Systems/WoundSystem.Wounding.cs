@@ -74,12 +74,12 @@ public partial class WoundSystem
     private void OnWoundableInit(EntityUid entity, WoundableComponent component,  ComponentInit args)
     {
         component.Wounds = _container.EnsureContainer<Container>(entity,WoundContainerId);
+        component.IntegrityCap = component.IntegrityCapMax;
+        component.HitPointCap = component.HitPointCapMax;
         if (component.HitPoints < 0)
             component.HitPoints = component.HitPointCapMax;
         if (component.Integrity < 0)
             component.Integrity = component.IntegrityCapMax;
-        component.IntegrityCap = component.IntegrityCapMax;
-        component.HitPointCap = component.HitPointCapMax;
     }
 
     public bool TrySpawnWound(EntityUid target, ProtoId<EntityPrototype> woundProtoId, out (EntityUid, WoundComponent) woundData,
