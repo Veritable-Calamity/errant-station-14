@@ -88,7 +88,7 @@ namespace Content.Shared.Damage
         ///     The damage changed event is used by other systems, such as damage thresholds.
         /// </remarks>
         public void DamageChanged(EntityUid uid, DamageableComponent component, DamageSpecifier? damageDelta = null,
-            bool interruptsDoAfters = true, EntityUid? origin = null)
+            bool interruptsDoAfters = true, EntityUid? origin = null, bool appliesWounds = true)
         {
             component.DamagePerGroup = component.Damage.GetDamagePerGroup(_prototypeManager);
             component.TotalDamage = component.Damage.Total;
@@ -99,7 +99,7 @@ namespace Content.Shared.Damage
                 var data = new DamageVisualizerGroupData(component.DamagePerGroup.Keys.ToList());
                 _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, data, appearance);
             }
-            RaiseLocalEvent(uid, new DamageChangedEvent(component, damageDelta, interruptsDoAfters, origin));
+            RaiseLocalEvent(uid, new DamageChangedEvent(component, damageDelta, interruptsDoAfters, origin, appliesWounds));
         }
 
         /// <summary>
@@ -322,15 +322,21 @@ namespace Content.Shared.Damage
         public readonly bool InterruptsDoAfters = false;
 
         /// <summary>
+        ///     Does this damage apply wounds to woundable entities?
+        /// </summary>
+        public readonly bool AppliesWounds;
+
+        /// <summary>
         ///     Contains the entity which caused the change in damage, if any was responsible.
         /// </summary>
         public readonly EntityUid? Origin;
 
-        public DamageChangedEvent(DamageableComponent damageable, DamageSpecifier? damageDelta, bool interruptsDoAfters, EntityUid? origin)
+        public DamageChangedEvent(DamageableComponent damageable, DamageSpecifier? damageDelta, bool interruptsDoAfters, EntityUid? origin,  bool appliesWounds)
         {
             Damageable = damageable;
             DamageDelta = damageDelta;
             Origin = origin;
+            AppliesWounds = appliesWounds;
 
             if (DamageDelta == null)
                 return;

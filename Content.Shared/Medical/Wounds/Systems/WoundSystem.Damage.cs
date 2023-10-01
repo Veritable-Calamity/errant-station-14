@@ -18,6 +18,8 @@ public partial class WoundSystem
 
     private void OnBodyDamaged(EntityUid target, BodyComponent component, DamageChangedEvent args)
     {
+        if (!args.AppliesWounds)
+            return;
         if (component.RootContainer.ContainedEntity == null
             || !TryComp<WoundableComponent>(component.RootContainer.ContainedEntity, out var rootWoundable))
             return;
@@ -37,6 +39,8 @@ public partial class WoundSystem
 
     private void OnWoundableDamaged(EntityUid target, WoundableComponent woundable,  DamageChangedEvent args)
     {
+        if (!args.AppliesWounds)
+            return;
         if (args.DamageDelta == null)
         {
             Log.Error($"Tried to set damage directly on {target} {woundable} do not set damage directly on entities " +
@@ -78,7 +82,7 @@ public partial class WoundSystem
             if (woundPool == null)
                 continue;
             var woundProtoId =
-                GetWoundProtoFromDamage(woundPool, CalculateWoundPercentDamage(target, rawDamage, woundable));
+                GetWoundProtoFromDamage(woundPool, CalculateWoundDamage(target, rawDamage, woundable));
             if (woundProtoId == null)
                 return;
             if (!TrySpawnWound(target, woundProtoId.Value, out var data))
@@ -125,11 +129,10 @@ public partial class WoundSystem
         }
     }
 
-    public FixedPoint2 CalculateWoundPercentDamage(EntityUid target, FixedPoint2 damage, WoundableComponent? woundable)
+    public FixedPoint2 CalculateWoundDamage(EntityUid target, FixedPoint2 damage, WoundableComponent? woundable)
     {
         if (!Resolve(target, ref woundable))
             return 0;
-        var scaledDamage = woundable.DamageScaling * damage;
-        return scaledDamage / woundable.TotalCapMax;
+        return woundable.DamageScaling * damage;
     }
 }
