@@ -21,7 +21,7 @@ public sealed class ConsciousnessSystem : EntitySystem
     {
         SubscribeLocalEvent<ConsciousnessComponent, MapInitEvent>(OnConsciousnessMapInit);
         SubscribeLocalEvent<ConsciousnessRequiredComponent, BodyPartRemovedEvent>(OnBodyPartRemoved);
-        SubscribeLocalEvent<ConsciousnessRequiredComponent, OrganRemovedEvent>(OnOrganRemoved);
+        SubscribeLocalEvent<ConsciousnessRequiredComponent, OrganRemovedFromBodyEvent>(OnOrganRemoved);
         SubscribeLocalEvent<ConsciousnessRequiredComponent, ComponentInit>(OnConsciousnessPartInit);
         SubscribeLocalEvent<ConsciousnessRequiredComponent, BodyPartAddedEvent>(OnBodyPartAdded);
         SubscribeLocalEvent<ConsciousnessComponent, ComponentGetState>(OnComponentGet);
@@ -119,9 +119,9 @@ public sealed class ConsciousnessSystem : EntitySystem
         }
     }
 
-    private void OnOrganRemoved(EntityUid uid, ConsciousnessRequiredComponent component, OrganRemovedEvent args)
+    private void OnOrganRemoved(EntityUid uid, ConsciousnessRequiredComponent component, OrganRemovedFromBodyEvent args)
     {
-        if (args.Organ.Body == null || !TryComp<ConsciousnessComponent>(args.Organ.Body.Value, out var consciousness))
+        if (!TryComp<ConsciousnessComponent>(args.OldBody, out var consciousness))
             return;
         if (!consciousness.RequiredConsciousnessParts.ContainsKey(component.Identifier))
         {
@@ -130,7 +130,7 @@ public sealed class ConsciousnessSystem : EntitySystem
         }
         consciousness.RequiredConsciousnessParts[component.Identifier] =
             (null,consciousness.RequiredConsciousnessParts[component.Identifier].Item2);
-        CheckRequiredParts(args.Organ.Body.Value, consciousness);
+        CheckRequiredParts(args.OldBody, consciousness);
     }
 
     private void OnBodyPartRemoved(EntityUid uid, ConsciousnessRequiredComponent component, ref BodyPartRemovedEvent args)

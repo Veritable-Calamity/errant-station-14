@@ -91,12 +91,12 @@ public partial class SharedBodySystem
 
                             if (bodyUid != null)
                             {
-                                var ev = new AddedToPartInBodyEvent(bodyUid.Value, children.Id);
+                                var ev = new OrganAddedToBody(bodyUid.Value, children.Id);
                                 RaiseLocalEvent(organ, ev);
                             }
                             else if (oldBody != null)
                             {
-                                var ev = new RemovedFromPartInBodyEvent(oldBody.Value, children.Id);
+                                var ev = new OrganRemovedFromBodyEvent(oldBody.Value, children.Id);
                                 RaiseLocalEvent(organ, ev);
                             }
 

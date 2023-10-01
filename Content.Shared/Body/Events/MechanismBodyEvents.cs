@@ -1,4 +1,4 @@
-using Content.Shared.Body.Organ;
+﻿using Content.Shared.Body.Organ;
 
 namespace Content.Shared.Body.Events
 {
@@ -21,12 +21,12 @@ namespace Content.Shared.Body.Events
     /// <summary>
     ///     Raised on a mechanism when it is added to a body part within a body.
     /// </summary>
-    public sealed class AddedToPartInBodyEvent : EntityEventArgs
+    public sealed class OrganAddedToBody : EntityEventArgs
     {
         public EntityUid Body;
         public EntityUid Part;
 
-        public AddedToPartInBodyEvent(EntityUid body, EntityUid part)
+        public OrganAddedToBody(EntityUid body, EntityUid part)
         {
             Body = body;
             Part = part;
@@ -40,7 +40,7 @@ namespace Content.Shared.Body.Events
     {
         public EntityUid OldPart;
 
-        public RemovedFromPartEvent(EntityUid oldPart)
+        public OrganRemovedEvent(EntityUid oldPart)
         {
             OldPart = oldPart;
         }
@@ -49,12 +49,12 @@ namespace Content.Shared.Body.Events
     /// <summary>
     ///     Raised on a mechanism when it is removed from a body part within a body.
     /// </summary>
-    public sealed class RemovedFromPartInBodyEvent : EntityEventArgs
+    public sealed class OrganRemovedFromBodyEvent : EntityEventArgs
     {
         public EntityUid OldBody;
         public EntityUid OldPart;
 
-        public RemovedFromPartInBodyEvent(EntityUid oldBody, EntityUid oldPart)
+        public OrganRemovedFromBodyEvent(EntityUid oldBody, EntityUid oldPart)
         {
             OldBody = oldBody;
             OldPart = oldPart;
