@@ -1,22 +1,9 @@
-﻿using Content.Shared.Body.Organ;
+using Content.Shared.Body.Organ;
 
 namespace Content.Shared.Body.Events
 {
     // All of these events are raised on a mechanism entity when added/removed to a body in different
     // ways.
-
-    /// <summary>
-    ///     Raised on a mechanism when it is added to a body.
-    /// </summary>
-    public sealed class AddedToBodyEvent : EntityEventArgs
-    {
-        public EntityUid Body;
-
-        public AddedToBodyEvent(EntityUid body)
-        {
-            Body = body;
-        }
-    }
 
     /// <summary>
     ///     Raised on a mechanism when it is added to a body part.
@@ -47,30 +34,15 @@ namespace Content.Shared.Body.Events
     }
 
     /// <summary>
-    ///     Raised on a mechanism when it is removed from a body.
-    /// </summary>
-    public sealed class RemovedFromBodyEvent : EntityEventArgs
-    {
-        public EntityUid Old;
-
-        public RemovedFromBodyEvent(EntityUid old)
-        {
-            Old = old;
-        }
-    }
-
-    /// <summary>
     ///     Raised on a mechanism when it is removed from a body part.
     /// </summary>
     public sealed class OrganRemovedEvent : EntityEventArgs
     {
-        public EntityUid OrganEntity;
-        public OrganComponent Organ;
+        public EntityUid OldPart;
 
-        public OrganRemovedEvent(EntityUid organEntity, OrganComponent organ)
+        public RemovedFromPartEvent(EntityUid oldPart)
         {
-            OrganEntity = organEntity;
-            Organ = organ;
+            OldPart = oldPart;
         }
     }
 
