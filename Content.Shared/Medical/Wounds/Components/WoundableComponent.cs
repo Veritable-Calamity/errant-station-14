@@ -48,6 +48,8 @@ public sealed partial class WoundableComponent : Component //Component that hold
 
     public FixedPoint2 IntegrityCap = -1;
 
+    public TimeSpan NextUpdate;
+
     [DataField("int")] public FixedPoint2 Integrity = -1;
 
     public WoundableComponent(Container wounds)
