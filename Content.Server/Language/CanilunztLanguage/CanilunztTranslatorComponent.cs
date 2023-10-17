@@ -1,4 +1,4 @@
-namespace Content.Server.Language.CanilunztLanguage;
+namespace Content.Server.Language.CanilunztLanguage
 {
     [RegisterComponent]
     public partial class CanilunztTranslatorComponent : Component
