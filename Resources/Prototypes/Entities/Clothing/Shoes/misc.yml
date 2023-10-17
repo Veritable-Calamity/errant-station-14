@@ -10,6 +10,17 @@
     sprite: Clothing/Shoes/Misc/flippers.rsi
 
 - type: entity
+  parent: ClothingShoesBase
+  id: ClothingShoesClothwarp
+  name: cloth footwraps
+  description: A roll of treated canvas used for wrapping claws or paws.
+  components:
+    - type: Sprite
+      sprite: Clothing/Shoes/Misc/clothwarp.rsi
+    - type: Clothing
+      sprite: Clothing/Shoes/Misc/clothwarp.rsi
+
+- type: entity
   parent: ClothingShoesBaseButcherable
   id: ClothingShoesLeather
   name: leather shoes
