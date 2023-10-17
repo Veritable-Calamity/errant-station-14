@@ -60,6 +60,9 @@
             "name": "Lawyer"
         },
         {
+            "name": "Magistrate"
+        },
+        {
             "name": "Unknown"
         },
         {
@@ -67,6 +70,9 @@
         },
         {
             "name": "CargoTechnician"
+        },
+        {
+            "name": "MailCarrier"
         },
         {
             "name": "Scientist"
@@ -151,6 +157,9 @@
         },
         {
             "name": "Zookeeper"
+        },
+        {
+            "name": "Blueshield"
         },
         {
             "name": "SeniorEngineer"

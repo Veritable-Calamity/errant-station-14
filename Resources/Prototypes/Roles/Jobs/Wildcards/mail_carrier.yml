@@ -1,0 +1,17 @@
+- type: job
+  id: MailCarrier
+  name: job-name-mailcarrier
+  description: job-description-mailcarrier
+  playTimeTracker: jobCargoTechnician
+  startingGear: MailCarrierGear
+  icon: "JobIconMailCarrier"
+  supervisors: job-supervisors-hop
+  access:
+  - Cargo
+  - Maintenance
+  - External
+
+- type: startingGear
+  id: MailCarrierGear
+  # TODO: Add mail-carrier specific gear
+

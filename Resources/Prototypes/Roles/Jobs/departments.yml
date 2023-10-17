@@ -23,6 +23,7 @@
   - Janitor
   - Lawyer
   - Librarian
+  - Magistrate
   - Mime
   - Musician
   - Passenger
@@ -41,6 +42,7 @@
   - ChiefMedicalOfficer
   - HeadOfPersonnel
   - HeadOfSecurity
+  - Magistrate
   - ResearchDirector
   - Quartermaster
 
@@ -95,7 +97,9 @@
   description: department-Specific-description
   color: "#9FED58"
   roles:
+  - Blueshield
   - Boxer
   - Reporter
   - Zookeeper
   - Psychologist
+  - MailCarrier
