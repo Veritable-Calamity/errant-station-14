@@ -82,6 +82,14 @@
   - chat-speech-verb-plant-3
 
 - type: speechVerb
+  id: Vulpkanin
+  speechVerbStrings:
+    - chat-speech-verb-vulpkanin-1
+    - chat-speech-verb-vulpkanin-2
+    - chat-speech-verb-vulpkanin-3
+    - chat-speech-verb-vulpkanin-4
+
+- type: speechVerb
   id: Canine
   speechVerbStrings:
   - chat-speech-verb-canine-1
