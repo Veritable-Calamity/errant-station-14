@@ -53,6 +53,19 @@
       - id: Handcuffs
 
 - type: entity
+  id: ClothingBeltBlueshieldWebbingFilled
+  parent: ClothingBeltBlueshieldWebbing
+  suffix: Filled
+  components:
+    - type: StorageFill
+      contents:
+        - id: GrenadeFlashBang
+        - id: GrenadeFlashBang
+        - id: Stunbaton
+        - id: Handcuffs
+        - id: Handcuffs
+
+- type: entity
   id: ClothingBeltJanitorFilled
   parent: ClothingBeltJanitor
   suffix: Filled

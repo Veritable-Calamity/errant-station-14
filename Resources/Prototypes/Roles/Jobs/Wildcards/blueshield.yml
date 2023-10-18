@@ -1,0 +1,40 @@
+- type: job
+  id: Blueshield
+  name: job-name-blueshield
+  description: job-description-blueshield
+  playTimeTracker: JobBlueshield
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 36000 #10 hrs
+    - !type:DepartmentTimeRequirement
+      department: Command
+      time: 36000 # 10 hours
+  startingGear: BlueshieldGear
+  icon: "JobIconBlueshield"
+  supervisors: job-supervisors-hos
+  canBeAntag: false
+  access:
+  - Security
+  - Brig
+  - Maintenance
+  - Service
+  - External
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+
+- type: startingGear
+  id: BlueshieldGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitSec
+    back: ClothingBackpackBlueshieldFilled
+    shoes: ClothingShoesBootsCombatFilled
+    eyes: ClothingEyesGlassesSecurity
+    head: ClothingHeadHelmetBasic
+    hands: ClothingHandsGlovesCombat
+    outerClothing: ClothingOuterArmorBasicBlueshield
+    id: SecurityPDA
+    ears: ClothingHeadsetCommand
+    belt: ClothingBeltBlueshieldWebbingFilled
+    pocket1: WeaponPistolMk58Nonlethal

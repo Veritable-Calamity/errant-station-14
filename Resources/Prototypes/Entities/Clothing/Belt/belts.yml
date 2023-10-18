@@ -486,6 +486,17 @@
 
 - type: entity
   parent: ClothingBeltStorageBase
+  id: ClothingBeltBlueshieldWebbing
+  name: Blueshield webbing
+  description: Unique and versatile chest rig, can hold security gear.
+  components:
+    - type: Sprite
+      sprite: Clothing/Belt/blueshieldwebbing.rsi
+    - type: Clothing
+      sprite: Clothing/Belt/blueshieldwebbing.rsi
+
+- type: entity
+  parent: ClothingBeltStorageBase
   id: ClothingBeltMercWebbing
   name: mercenarie webbing
   description: Ideal for storing everything from ammo to weapons and combat essentials.

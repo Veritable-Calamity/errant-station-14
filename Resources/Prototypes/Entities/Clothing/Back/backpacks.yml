@@ -62,6 +62,15 @@
 
 - type: entity
   parent: ClothingBackpack
+  id: ClothingBackpackBlueshield
+  name: Blueshield backpack
+  description: It's a very robust backpack, in blue.
+  components:
+    - type: Sprite
+      sprite: Clothing/Back/Backpacks/blueshield.rsi
+
+- type: entity
+  parent: ClothingBackpack
   id: ClothingBackpackBrigmedic
   name: brigmedic backpack
   description: It's a very sterile backpack.

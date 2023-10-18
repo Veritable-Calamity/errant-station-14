@@ -28,7 +28,19 @@
       - id: BoxSurvivalSecurity
       - id: Flash
       - id: MagazinePistol
-      
+
+- type: entity
+  noSpawn: true
+  parent: ClothingBackpackBlueshield
+  id: ClothingBackpackBlueshieldFilled
+  components:
+    - type: StorageFill
+      contents:
+        - id: BoxSurvivalSecurity
+        - id: Flash
+        - id: MagazinePistol
+        - id: WeaponDisabler
+
 - type: entity
   noSpawn: true
   parent: ClothingBackpackSecurity

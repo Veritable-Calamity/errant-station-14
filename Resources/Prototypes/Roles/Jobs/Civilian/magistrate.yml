@@ -4,13 +4,17 @@
   description: job-description-magistrate
   playTimeTracker: JobMagistrate
   requirements:
-    - !type:OverallPlaytimeRequirement
-      time: 36000 # 10 hrs
+  - !type:OverallPlaytimeRequirement
+    time: 36000 # 10 hrs
   startingGear: LawyerGear
-  icon: "JobIconLawyer"
+  icon: "JobIconMagistrate"
   supervisors: job-supervisors-centcom
+  canBeAntag: false
   access:
     - Command
     - Service
     - Brig
     - Maintenance
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]

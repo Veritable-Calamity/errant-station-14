@@ -10,9 +10,14 @@
   id: Salvage
   name: id-card-access-level-salvage
 
+- type: accessLevel
+  id: Mailroom
+  name: id-card-access-level-mailroom
+
 - type: accessGroup
   id: Cargo
   tags:
   - Quartermaster
   - Salvage
   - Cargo
+  - Mailroom
