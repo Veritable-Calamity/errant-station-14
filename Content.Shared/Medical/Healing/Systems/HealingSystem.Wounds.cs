@@ -18,7 +18,7 @@ public sealed partial class HealingSystem
             var oldSeverity = wound.Severity;
             wound.Severity =
                 FixedPoint2.Clamp(
-                    wound.Severity + wound.BaseHealingRate * wound.HealingMultiplier +
+                    wound.Severity - wound.BaseHealingRate * wound.HealingMultiplier +
                     wound.HealingModifier, 0, 100);
             var severityDelta = oldSeverity - wound.Severity;
             if (severityDelta == 0)
@@ -35,9 +35,13 @@ public sealed partial class HealingSystem
     {
         if (wound.CanHealInt)
         {
-            woundable.IntegrityCap += wound.IntegrityDamage * severityDelta;
+            woundable.IntegrityCap += wound.IntegrityDamage * (severityDelta/100);
+            if (woundable.IntegrityCap > woundable.IntegrityCapMax)
+                woundable.IntegrityCap = woundable.IntegrityCapMax;
         }
-        woundable.HitPointCap += wound.HitpointDamage * severityDelta;
+        woundable.HitPointCap += wound.HitpointDamage * (severityDelta/100);
+        if (woundable.HitPointCap > woundable.HitPointCapMax)
+            woundable.HitPointCap = woundable.HitPointCapMax;
         Dirty(woundableEntity, woundable);
     }
 }

@@ -13,7 +13,7 @@ public sealed partial class HealingSystem
         {
             if (_timing.CurTime < woundable.NextUpdate)
                 continue;
-            woundable.NextUpdate += HealUpdateRate;//update the next update time before checking if this is allowed to heal to
+            woundable.NextUpdate += _healUpdateRate;//update the next update time before checking if this is allowed to heal to
                                                    //prevent garbage from being constantly ticked by update
             if (!woundable.CanHeal)
                 continue;

@@ -1803,5 +1803,20 @@ namespace Content.Shared.CCVar
         /// </summary>
         public static readonly CVarDef<string> ReplayAutoRecordTempDir =
             CVarDef.Create("replay.auto_record_temp_dir", "", CVar.SERVERONLY);
+
+
+        /*
+         * Medical CVars
+         *
+         */
+
+        /*
+         * Healing update rate
+         */
+        /// <summary>
+        /// Rate (in seconds) to apply healing to woundable entities and wounds
+        /// </summary>
+        public static readonly CVarDef<int> MedicalHealingRate =
+            CVarDef.Create("medical.healing_rate", 2, CVar.SERVERONLY);
     }
 }
