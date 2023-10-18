@@ -46,12 +46,17 @@ public sealed partial class WoundableComponent : Component //Component that hold
 
     [DataField("intCap", required: true)]public FixedPoint2 IntegrityCapMax;
 
+    [DataField("int")] public FixedPoint2 Integrity = -1;
+
     public FixedPoint2 IntegrityCap = -1;
 
     public TimeSpan NextUpdate;
 
-    [DataField("int")] public FixedPoint2 Integrity = -1;
+    [DataField("canHeal")] public bool CanHeal = true;
 
+    [DataField("healingRate")] public FixedPoint2 HealingRate = 0.01;
+
+    [DataField("healingMult")] public FixedPoint2 HealingMultiplier = 1;
     public WoundableComponent(Container wounds)
     {
         Wounds = wounds;

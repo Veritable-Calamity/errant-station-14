@@ -1,30 +1,24 @@
-﻿using Content.Shared.Medical.Wounds.Components;
+﻿using Content.Shared.FixedPoint;
+using Content.Shared.Medical.Wounds.Components;
+using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.Medical.Healing.Systems;
 
-public sealed class HealingSystem : EntitySystem
+public sealed partial class HealingSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedContainerSystem _containers = default!;
 
     private static readonly TimeSpan HealUpdateRate = new(0,0,1);
-
-    private EntityQueryEnumerator<WoundableComponent> woundables;
     public override void Initialize()
     {
-        woundables = EntityQueryEnumerator<WoundableComponent>();
+
     }
 
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
-
-        while (woundables.MoveNext(out var uid, out var woundable))
-        {
-            if (_timing.CurTime < woundable.NextUpdate)
-                continue;
-            woundable.NextUpdate += HealUpdateRate;
-
-        }
+        UpdateWoundables(frameTime);
     }
 }

@@ -20,9 +20,7 @@ public sealed partial class WoundComponent : Component
     public FixedPoint2 IntegrityDamage;
 
     [DataField("severity"), AutoNetworkedField]
-    public FixedPoint2 SeverityPercent = 100;
-
-    public FixedPoint2 Severity => SeverityPercent / 100;
+    public FixedPoint2 Severity = 100;
 
     //How many severity points per woundTick does this part heal passively
     [DataField("baseHealingRate"), AutoNetworkedField]
@@ -36,7 +34,9 @@ public sealed partial class WoundComponent : Component
     [DataField("healingMultiplier"), AutoNetworkedField]
     public FixedPoint2 HealingMultiplier;
 
-    //Is this wound actively bleeding?
-    [DataField("canBleed"), AutoNetworkedField]
-    public bool CanBleed;
+    [DataField("canHeal"), AutoNetworkedField]
+    public bool CanHeal = true;
+
+    [DataField("canHealInt"), AutoNetworkedField]
+    public bool CanHealInt;
 }

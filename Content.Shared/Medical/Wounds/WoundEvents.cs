@@ -13,3 +13,8 @@ public record struct WoundAddedEvent(EntityUid WoundEntity, WoundComponent Wound
 
 [ByRefEvent]
 public record struct WoundRemovedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, EntityUid? RootWoundableEntity);
+
+
+[ByRefEvent]
+public record struct WoundSeverityChangedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, EntityUid? RootWoundableEntity,
+    FixedPoint2 OldSeverity, FixedPoint2 SeverityDelta);
