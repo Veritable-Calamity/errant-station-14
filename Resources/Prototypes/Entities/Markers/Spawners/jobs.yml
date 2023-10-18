@@ -643,3 +643,39 @@
     layers:
       - state: green
       - state: zookeeper
+
+- type: entity
+  id: SpawnPointMailCarrier
+  parent: SpawnPointJobBase
+  name: mailcarrier
+  components:
+    - type: SpawnPoint
+      job_id: MailCarrier
+    - type: Sprite
+      layers:
+        - state: green
+        - state: mailcarrier
+
+- type: entity
+  id: SpawnPointBlueshield
+  parent: SpawnPointJobBase
+  name: blueshield
+  components:
+    - type: SpawnPoint
+      job_id: Blueshield
+    - type: Sprite
+      layers:
+        - state: green
+        - state: blueshield
+
+- type: entity
+  id: SpawnPointMagistrate
+  parent: SpawnPointJobBase
+  name: magistrate
+  components:
+    - type: SpawnPoint
+      job_id: Magistrate
+    - type: Sprite
+      layers:
+        - state: green
+        - state: magistrate
