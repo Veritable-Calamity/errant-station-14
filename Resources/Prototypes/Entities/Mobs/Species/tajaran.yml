@@ -1,12 +1,12 @@
 - type: entity
   save: false
-  name: Urist McVulp
+  name: Urist McTaj
   parent: BaseMobSpeciesOrganic
-  id: BaseMobVulpkanin
+  id: BaseMobTajaran
   abstract: true
   components:
-    - type: HumanoidAppearance
-      species: Vulpkanin
+    - type: Humanoidappearance
+      species: Tajaran
     - type: Hunger
       baseDecayRate: 0.06
     - type: Thirst
@@ -15,14 +15,14 @@
       sprite: Mobs/Species/Vulpkanin/parts.rsi
       state: full
     - type: Body
-      prototype: Vulpkanin
+      prototype: Tajaran
       requiredLegs: 2
-    # - type: VulpLanguageSpeaker
-    # - type: VulpLangaugeListener
-    # - type: VulpGiveTranslator
+    # - type: TajLanguageSpeaker
+    # - type: TajLanguageListener
+    # - type: TajGiveTranslator
     - type: Speech
-      speechSounds: Vulpkanin
-      speechVerb: Vulpkanin
+      speechSounds: Tajaran
+      speechVert: Tajaran
     - type: Sprite
       netsync: false
       noRot: true
@@ -76,7 +76,7 @@
         - map: [ "pocket2" ]
     - type: Damageable
       damageContainer: Biological
-      damageModifierSet: Vulpkanin
+      damageModifierSet: Tajaran
     - type: Perishable
     - type: TemperatureProtection
       coefficient: 0.1
@@ -87,20 +87,22 @@
       specificHeat: 46
       coldDamage:
         types:
-          Cold : 0.05
+          Cold: 0.05
     - type: Flammable
       damage:
         types:
-          Heat: 1.5 # Rip Fur
+          Heat: 1.5 # RIP fur
 
 
 - type: entity
   save: false
-  name: Vulpkanin Dummy
+  name: Tajaran Dummy
   parent: MobHumanDummy
-  id: MobVulpkaninDummy
+  id: MobTajaranDummy
   noSpawn: true
-  description: A dummy vulpkanin meant to be used in character setup.
+  description: A dummy Tajaran meant to be used in character setup.
   components:
     - type: HumanoidAppearance
       species: Vulpkanin
+
+
