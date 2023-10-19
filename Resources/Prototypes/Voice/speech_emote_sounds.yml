@@ -156,6 +156,38 @@
     variation: 0.125
 
 - type: emoteSounds
+  id: MaleVulpkanin
+  params:
+    variation: 0.125
+  sounds:
+    Scream:
+      collection: MaleScreams
+    Laugh:
+      collection: MaleLaugh
+    Growl:
+      collection: VulpkaninGrowls
+    Howl:
+      collection: VulpkaninHowl
+    Bark:
+      collection: VulpkaninBark
+
+- type: emoteSounds
+  id: FemaleVulpkanin
+  params:
+    variation: 0.125
+  sounds:
+    Scream:
+      collection: FemaleScreams
+    Laugh:
+      collection: FemaleLaugh
+    Growl:
+      collection: VulpkaninGrowls
+    Howl:
+      collection: VulpkaninHowl
+    Bark:
+      collection: VulpkaninBark
+
+- type: emoteSounds
   id: UnisexVox
   sound:
     path: /Audio/Voice/Vox/shriek1.ogg
