@@ -148,6 +148,12 @@
     Poison: 0.9
 
 - type: damageModifierSet
+  id: Tajar
+  coefficients: # just using the vulpkanin modifier set for now.
+    Cold: 0.5
+    Poison: 0.9
+
+- type: damageModifierSet
   id: Zombie #Blunt resistant and immune to biological threats, but can be hacked apart and burned
   coefficients:
     Blunt: 0.7

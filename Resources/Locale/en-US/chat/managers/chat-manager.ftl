@@ -115,3 +115,8 @@ chat-speech-verb-vulpkanin-1 = rawrs
 chat-speech-verb-vulpkanin-2 = barks
 chat-speech-verb-vulpkanin-3 = rurs
 chat-speech-verb-vulpkanin-4 = yeeps
+
+chat-speech-verb-tajaran-1 = rawrs
+chat-speech-verb-tajaran-2 = meows
+chat-speech-verb-tajaran-3 = mrowls
+chat-speech-verb-tajaran-4 = purrs

@@ -1,0 +1,39 @@
+- type: entity
+  save: false
+  name: Urist McTaj
+  parent: BaseMobTajaran
+  id: MobTajaran
+  components:
+    - type: CombatMode
+    - type: InteractionPopup
+      successChance: 1
+      interactSuccessString: hugging-success-generic
+      interactSuccessSound: /Audio/Effects/thudswoosh.ogg
+      messagePercievedByOthers: hugging-success-generic-others
+    - type: MindContainer
+      showExamineInfo: true
+    - type: Input
+      context: "human"
+    - type: MobMover
+    - type: InputMover
+    - type: Alerts
+    - type: Vocal
+      sounds:
+        Male: MaleTajaran
+        Female: FemaleTajaran
+        Unsexed: MaleTajaran
+    - type: Eye
+    - type: CameraRecoil
+    - type: Examiner
+    - type: CanHostGuardian
+    # - type: MailReceiver
+    - type: NpcFactionMember
+      factions:
+        - NanoTrasen
+    - type: Respirator
+      damage:
+        types:
+          Asphyxiation: 1.0
+      damageRecovery:
+        types:
+          Asphyxiation: -1.0
