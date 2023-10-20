@@ -86,6 +86,8 @@
   noSpawn: true
   description: A dummy Synth meant to be used in character setup.
   components:
+    - type: Inventory
+      templateId: synth
     - type: HumanoidAppearance
       species: Synth
 
