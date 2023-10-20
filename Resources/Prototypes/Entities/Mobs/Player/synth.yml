@@ -1,0 +1,32 @@
+- type: entity
+  save: false
+  name: Urist Mc0101
+  parent: BaseMobSynth
+  id: MobSynth
+  components:
+    - type: CombatMode
+    - type: InteractionPopup
+      successChance: 1
+      interactSuccessString: hugging-success-generic
+      interactSuccessSound: /Audio/Effects/thudswoosh.ogg
+      messagePerceivedByOthers: hugging-success-generic-others
+    - type: MindContainer
+      showExamineInfo: true
+    - type: Input
+      context: "human"
+    - type: MobMover
+    - type: InputMover
+    - type: Alerts
+    - type: Vocal
+      sounds:
+        Male: MaleSynth
+        Female: FemaleSynth
+        Unsexed: MaleSynth
+    - type: Eye
+    - type: CameraRecoil
+    - type: Examiner
+    - type: CanHostGuardian
+    # - type: MailReceiver
+    - type: NpcFactionMember
+      factions:
+        - NanoTrasen
