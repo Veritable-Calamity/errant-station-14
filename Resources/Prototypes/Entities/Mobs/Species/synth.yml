@@ -1,1 +1,92 @@
-# TODO
+- type: entity
+  save: false
+  name: Urist McBeep
+  parent: BaseMobSpeciesOrganic # I don't think this is correct...
+  id: BaseMobSynth
+  abstract: true
+  components:
+    - type: HumanoidAppearance
+      species: synth
+    - type: Icon
+      sprite: Mobs/Species/Synth/parts.rsi
+      state: full
+    - type: Body
+      prototype: Synth
+      requiredLegs: 2
+    - type: Speech
+      speechVerb: robotic
+      speechSounds: Pai
+    - type: Sprite
+      netsync: false
+      noRot: true
+      drawDepth: mobs
+      layers:
+        - map: [ "enum.HumanoidVisualLayers.Chest" ]
+        - map: [ "enum.HumanoidVisualLayers.Head" ]
+        - map: [ "enum.HumanoidVisualLayers.Snout" ]
+        - map: [ "enum.HumanoidVisualLayers.Eyes" ]
+        - map: [ "enum.HumanoidVisualLayers.RArm" ]
+        - map: [ "enum.HumanoidVisualLayers.LArm" ]
+        - map: [ "enum.HumanoidVisualLayers.RLeg" ]
+        - map: [ "enum.HumanoidVisualLayers.LLeg" ]
+        - shader: StencilClear
+          sprite: Mobs/Species/Human/parts.rsi #PJB on stencil clear being on the left leg: "...this is 'fine'" -https://github.com/space-wizards/space-station-14/pull/12217#issuecomment-1291677115
+          # its fine, but its still very stupid that it has to be done like this instead of allowing sprites to just directly insert a stencil clear.
+          # sprite refactor when
+          state: l_leg
+        - shader: StencilMask
+          map: [ "enum.HumanoidVisualLayers.StencilMask" ]
+          sprite: Mobs/Customization/Synth/masking_helpers.rsi
+          state: female_full
+          visible: false
+        - map: [ "jumpsuit" ]
+        - map: [ "enum.HumanoidVisualLayers.LHand" ]
+        - map: [ "enum.HumanoidVisualLayers.RHand" ]
+        - map: [ "enum.HumanoidVisualLayers.LFoot" ]
+        - map: [ "enum.HumanoidVisualLayers.RFoot" ]
+        - map: [ "enum.HumanoidVisualLayers.Handcuffs" ]
+          color: "#ffffff"
+          sprite: Objects/Misc/handcuffs.rsi
+          state: body-overlay-2
+          visible: false
+        - map: [ "id" ]
+        - map: [ "gloves" ]
+        - map: [ "shoes" ]
+        - map: [ "ears" ]
+        - map: [ "outerClothing" ]
+        - map: [ "eyes" ]
+        - map: [ "belt" ]
+        - map: [ "neck" ]
+        - map: [ "back" ]
+        - map: [ "enum.HumanoidVisualLayers.FacialHair" ]
+        - map: [ "enum.HumanoidVisualLayers.Hair" ]
+        - map: [ "enum.HumanoidVisualLayers.HeadSide" ]
+        - map: [ "enum.HumanoidVisualLayers.HeadTop" ]
+        - map: [ "enum.HumanoidVisualLayers.Tail" ]
+        - map: [ "mask" ]
+        - map: [ "head" ]
+        - map: [ "pocket1" ]
+        - map: [ "pocket2" ]
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: Synth
+    - type: TemperatureProtection
+      coefficient: 0.1
+    - type: Temperature
+      heatDamageThreshold: 335
+      coldDamageThreshold: 0
+      currentTemperature: 310.15
+      specificHeat: 46
+
+- type: entity
+  save: false
+  name: Synth Dummy
+  parent: MobHumanDummy
+  id: MobSynthDummy
+  noSpawn: true
+  description: A dummy Synth meant to be used in character setup.
+  components:
+    - type: HumanoidAppearance
+      species: Synth
+
+
