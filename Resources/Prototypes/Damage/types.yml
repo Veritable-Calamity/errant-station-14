@@ -1,3 +1,4 @@
+#TODO: Remove Asphyxiation as a type of damage, this should be handled systemically
 # Damage due to being unable to breathe.
 # Represents not enough oxygen (or equivalent) getting to the blood.
 # Usually healed automatically if entity can breathe
@@ -6,7 +7,7 @@
   armorCoefficientPrice: 5
   armorFlatPrice: 50
 
-
+#TODO: Remove bloodloss as a type of damage, this should be handled systemically
 # Damage representing not having enough blood.
 # Represents there not enough blood to supply oxygen (or equivalent).
 - type: damageType
@@ -14,21 +15,28 @@
   armorCoefficientPrice: 5
   armorFlatPrice: 50
 
+# Damage representing pain directly being applied to nerves,
+# only should be used for esoteric effects like space wizard or a pain-ray
+- type: damageType
+  id: Pain
+  armorCoefficientPrice: 1
+  armorFlatPrice: 1
+
 - type: damageType
   id: Blunt
   armorCoefficientPrice: 2
   armorFlatPrice: 10
-  
+
 - type: damageType
   id: Cellular
   armorCoefficientPrice: 5
   armorFlatPrice: 30
-  
+
 - type: damageType
   id: Caustic
   armorCoefficientPrice: 5
   armorFlatPrice: 30
-  
+
 - type: damageType
   id: Cold
   armorCoefficientPrice: 2.5

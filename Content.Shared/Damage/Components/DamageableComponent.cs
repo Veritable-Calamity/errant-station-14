@@ -1,5 +1,6 @@
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.FixedPoint;
+using Content.Shared.Medical.Pain.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
@@ -16,7 +17,7 @@ namespace Content.Shared.Damage
     /// </remarks>
     [RegisterComponent]
     [NetworkedComponent()]
-    [Access(typeof(DamageableSystem), Other = AccessPermissions.ReadExecute)]
+    [Access(typeof(DamageableSystem), typeof(PainSystem), Other = AccessPermissions.ReadExecute)]
     public sealed partial class DamageableComponent : Component
     {
         /// <summary>

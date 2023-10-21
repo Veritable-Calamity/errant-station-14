@@ -9,12 +9,19 @@ public record struct TryApplyWoundEvent(EntityUid Target, WoundableComponent Wou
     EntityUid? Origin);
 
 [ByRefEvent]
-public record struct WoundAddedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, EntityUid? RootWoundableEntity);
+public record struct WoundAddedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, WoundableComponent Woundable, WoundableComponent RootWoundable);
 
 [ByRefEvent]
-public record struct WoundRemovedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, EntityUid? RootWoundableEntity);
+public record struct WoundRemovedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, WoundableComponent OldWoundable, WoundableComponent OldRootWoundable);
+
+[ByRefEvent]
+public record struct WoundableAttachedEvent(EntityUid ParentWoundableEntity, WoundableComponent ParentWoundableComponent);
+
+[ByRefEvent]
+public record struct WoundableDetachedEvent(EntityUid ParentWoundableEntity, WoundableComponent ParentWoundableComponent);
+
 
 
 [ByRefEvent]
-public record struct WoundSeverityChangedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, EntityUid? RootWoundableEntity,
+public record struct WoundSeverityChangedEvent(EntityUid WoundEntity, WoundComponent WoundComponent, WoundableComponent Woundable,
     FixedPoint2 OldSeverity, FixedPoint2 SeverityDelta);

@@ -16,6 +16,7 @@ public partial class WoundSystem
         SubscribeLocalEvent<BodyComponent, DamageChangedEvent>(OnBodyDamaged);
     }
 
+    //Damagable handler that relays damage from a humanoid/body entity to the root woundable bodypart entity
     private void OnBodyDamaged(EntityUid target, BodyComponent component, DamageChangedEvent args)
     {
         if (!args.AppliesWounds)
@@ -29,14 +30,35 @@ public partial class WoundSystem
                       $"{rootWoundable} directly setting damage on woundable entities will not spawn wounds!");
             return;
         }
+
+        //TODO: This only applies wounds to the torso, this makes debugging easier, later swap this for the randomization logic!
         if (_damageable.TryChangeDamage(component.RootContainer.ContainedEntity, args.DamageDelta,
                 interruptsDoAfters: args.InterruptsDoAfters, origin: args.Origin) != null)
             return;
         Log.Error($"Failed to relay damage to a woundable entity " +
                   $"{component.RootContainer.ContainedEntity} that does NOT have a damagable component. " +
                   $"This is required for wounds to function!");
+
+        /* TODO: replace the above logic with this when you are done testing to properly select a random bodypart
+        so that wounds don't only get applied to the torso */
+
+        // if (!TryGetRandomActiveChildWoundable(target, out var data, rootWoundable))
+        // {
+        //     Log.Verbose($"Could not find a woundable to relay wounds to in {rootWoundable}. If this expected ignore this warning," +
+        //                 $" otherwise double check your woundable hierarchy!");
+        //     return;
+        // }
+        //
+        // var childEntity = data.Value.Item1;
+        // if (_damageable.TryChangeDamage(childEntity, args.DamageDelta,
+        //         interruptsDoAfters: args.InterruptsDoAfters, origin: args.Origin) != null)
+        //     return;
+        // Log.Error($"Failed to relay damage to a woundable entity {childEntity} that does NOT have a damagable component. " +
+        //           $"This is required for wounds to function!");
     }
 
+    //Handler that is triggered when a woundable recieves damage, this is a proxy to the applyDamageAndCreateWounds function
+    //which holds all the main logic!
     private void OnWoundableDamaged(EntityUid target, WoundableComponent woundable,  DamageChangedEvent args)
     {
         if (!args.AppliesWounds)
@@ -53,22 +75,9 @@ public partial class WoundSystem
             ApplyDamageAndCreateWounds(target, woundable, args.DamageDelta);
             return;
         }
-
-        if (!TryGetRandomActiveChildWoundable(target, out var data, woundable))
-        {
-            Log.Verbose($"Could not find a woundable to relay wounds to in {woundable}. If this expected ignore this warning," +
-                        $" otherwise double check your woundable hierarchy!");
-            return;
-        }
-
-        var childEntity = data.Value.Item1;
-        if (_damageable.TryChangeDamage(childEntity, args.DamageDelta,
-                interruptsDoAfters: args.InterruptsDoAfters, origin: args.Origin) != null)
-            return;
-        Log.Error($"Failed to relay damage to a woundable entity {childEntity} that does NOT have a damagable component. " +
-                  $"This is required for wounds to function!");
     }
 
+    //Main wound application and damage dispatching function
     protected void ApplyDamageAndCreateWounds(EntityUid target, WoundableComponent woundable, DamageSpecifier damage)
     {
         if (_net.IsClient)
@@ -82,7 +91,7 @@ public partial class WoundSystem
             if (woundPool == null)
                 continue;
             var woundProtoId =
-                GetWoundProtoFromDamage(woundPool, CalculateWoundDamage(target, rawDamage, woundable));
+                SelectWoundProtoUsingDamage(woundPool.Value, CalculateWoundDamage(target, rawDamage, woundable));
             if (woundProtoId == null)
                 return;
             if (!TrySpawnWound(target, woundProtoId.Value, out var data))
@@ -92,12 +101,13 @@ public partial class WoundSystem
         }
     }
 
+    //Applies damage to woundables and handles part gibbing/destruction
     private void ApplyWoundableDamage(EntityUid target, WoundableComponent woundable, DamageSpecifier damage)
     {
         var totalAdjDmg = woundable.DamageScaling * damage.Total;
 
         if (totalAdjDmg < 0)
-            return;//TODO: write healing logic. For now this will have no effect!
+            return;//TODO: write esoteric healing logic. For now this will have no effect!
 
         woundable.HitPoints -= totalAdjDmg; //TODO factor in resistances when they get implemented
         if (woundable.HitPoints < 0)
@@ -117,6 +127,8 @@ public partial class WoundSystem
         return;
     }
 
+
+    //Part gibbing logic, this is separate from body gibbing and specifically deals with gibbing single parts and their organs
     private void DestroyWoundable(EntityUid woundableEntity, WoundableComponent woundable, DamageSpecifier originalDamage, FixedPoint2 percentOverflow)
     {
         if (TryComp<BodyPartComponent>(woundableEntity, out var bodyPart))
@@ -129,6 +141,13 @@ public partial class WoundSystem
         }
     }
 
+    /// <summary>
+    /// Helper function to calculate how much damage a woundable will receive after scaling is applied
+    /// </summary>
+    /// <param name="target">Owner of the woundable</param>
+    /// <param name="damage">Unmodified damage</param>
+    /// <param name="woundable">Woundable component</param>
+    /// <returns>The damage that would be applied to a woundable after modifiers</returns>
     public FixedPoint2 CalculateWoundDamage(EntityUid target, FixedPoint2 damage, WoundableComponent? woundable)
     {
         if (!Resolve(target, ref woundable))
