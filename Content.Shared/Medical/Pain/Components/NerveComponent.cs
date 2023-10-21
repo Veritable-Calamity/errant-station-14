@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 
 namespace Content.Shared.Medical.Pain.Components;
 
-[NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class NerveComponent : Component
 {
     [DataField("painMultiplier"), AutoNetworkedField]

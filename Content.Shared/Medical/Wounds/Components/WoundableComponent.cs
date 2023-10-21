@@ -50,7 +50,7 @@ public sealed partial class WoundableComponent : Component //Component that hold
 
     public FixedPoint2 IntegrityCap = -1;
 
-    public TimeSpan NextUpdate;
+    public float AccumulatedFrameTime;
 
     [DataField("canHeal")] public bool CanHeal = true;
 

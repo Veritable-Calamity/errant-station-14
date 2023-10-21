@@ -1,4 +1,5 @@
-﻿using Robust.Shared.Configuration;
+﻿using Content.Shared.CCVar;
+using Robust.Shared.Configuration;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 
@@ -10,7 +11,8 @@ public sealed partial class HealingSystem : EntitySystem
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly SharedContainerSystem _containers = default!;
 
-    private static TimeSpan _healUpdateRate;
+    private static float _healUpdateRate;
+    private static float _globalHealMultiplier;
     public override void Initialize()
     {
         SetupCVars();
@@ -23,8 +25,12 @@ public sealed partial class HealingSystem : EntitySystem
 
     private void SetupCVars()
     {
-        _healUpdateRate = new TimeSpan(0,0,_config.GetCVar<int>("medical.healing_rate"));
-        _config.OnValueChanged<int>("medical.healing_rate",
-            newRate => { _healUpdateRate = new TimeSpan(0, 0, newRate); });
+        _healUpdateRate = 1/_config.GetCVar(CCVars.MedicalHealingTickrate);
+        _globalHealMultiplier = _config.GetCVar(CCVars.MedicalHealingMultiplier);
+
+        _config.OnValueChanged(CCVars.MedicalHealingTickrate,
+            newRate => { _healUpdateRate = 1 / newRate;});
+        _config.OnValueChanged(CCVars.MedicalHealingMultiplier,
+            newMult => { _globalHealMultiplier = newMult;});
     }
 }

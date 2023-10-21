@@ -1816,13 +1816,16 @@ namespace Content.Shared.CCVar
          *
          */
 
-        /*
-         * Healing update rate
-         */
         /// <summary>
-        /// Rate (in seconds) to apply healing to woundable entities and wounds
+        ///How many times per second do we want to heal wounds (default, once every 2 seconds)
         /// </summary>
-        public static readonly CVarDef<int> MedicalHealingRate =
-            CVarDef.Create("medical.healing_rate", 2, CVar.SERVERONLY);
+        public static readonly CVarDef<float> MedicalHealingTickrate =
+            CVarDef.Create("medical.heal_tickrate", 0.5f, CVar.SERVER | CVar.REPLICATED);
+
+        /// <summary>
+        ///How much do we want to multiply healing values by
+        /// </summary>
+        public static readonly CVarDef<float> MedicalHealingMultiplier =
+            CVarDef.Create("medical.heal_mult", 1f, CVar.SERVER | CVar.REPLICATED);
     }
 }

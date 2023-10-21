@@ -18,8 +18,8 @@ public sealed partial class HealingSystem
             var oldSeverity = wound.Severity;
             wound.Severity =
                 FixedPoint2.Clamp(
-                    wound.Severity - wound.BaseHealingRate * wound.HealingMultiplier +
-                    wound.HealingModifier, 0, 100);
+                     _globalHealMultiplier * (wound.Severity - wound.BaseHealingRate *
+                         wound.HealingMultiplier + wound.HealingModifier), 0, 100);
             var severityDelta = oldSeverity - wound.Severity;
             if (severityDelta == 0)
                 continue; //Don't do anything if the severity didn't actually change

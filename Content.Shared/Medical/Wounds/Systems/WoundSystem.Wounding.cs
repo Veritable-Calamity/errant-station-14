@@ -73,6 +73,7 @@ public partial class WoundSystem
 
     private void OnWoundableInit(EntityUid entity, WoundableComponent component,  ComponentInit args)
     {
+        component.RootWoundable = entity; //Set root to itself by default!
         component.Wounds = _container.EnsureContainer<Container>(entity,WoundContainerId);
         component.IntegrityCap = component.IntegrityCapMax;
         component.HitPointCap = component.HitPointCapMax;
