@@ -25,7 +25,7 @@ public sealed partial class HealingSystem
                 continue; //Don't do anything if the severity didn't actually change
             Dirty(woundEntity, wound);
             UpdateCoreStats(woundableEntity, woundable, wound, severityDelta);
-            var ev = new WoundSeverityChangedEvent(woundEntity, wound, woundable.RootWoundable, oldSeverity,
+            var ev = new WoundSeverityChangedEvent(woundEntity, wound, woundable, oldSeverity,
                 severityDelta);
             RaiseLocalEvent(woundEntity, ref ev);
         }
