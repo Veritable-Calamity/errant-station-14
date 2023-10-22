@@ -7,6 +7,7 @@ using Content.Client.UserInterface.Systems.EscapeMenu;
 using Content.Client.UserInterface.Systems.Gameplay;
 using Content.Client.UserInterface.Systems.Guidebook;
 using Content.Client.UserInterface.Systems.Inventory;
+using Content.Client.UserInterface.Systems.Medical.Controllers;
 using Content.Client.UserInterface.Systems.MenuBar.Widgets;
 using Content.Client.UserInterface.Systems.Sandbox;
 using Robust.Client.UserInterface.Controllers;
@@ -24,6 +25,7 @@ public sealed class GameTopMenuBarUIController : UIController
     [Dependency] private readonly ActionUIController _action = default!;
     [Dependency] private readonly SandboxUIController _sandbox = default!;
     [Dependency] private readonly GuidebookUIController _guidebook = default!;
+    [Dependency] private readonly MedicalMenuUIController _medical = default!;
 
     private GameTopMenuBar? GameTopMenuBar => UIManager.GetActiveUIWidgetOrNull<GameTopMenuBar>();
 
@@ -38,6 +40,7 @@ public sealed class GameTopMenuBarUIController : UIController
 
     public void UnloadButtons()
     {
+        _medical.UnloadButton();
         _escape.UnloadButton();
         _guidebook.UnloadButton();
         _inventory.UnloadButton();
@@ -51,6 +54,7 @@ public sealed class GameTopMenuBarUIController : UIController
 
     public void LoadButtons()
     {
+        _medical.LoadButton();
         _escape.LoadButton();
         _guidebook.LoadButton();
         _inventory.LoadButton();
