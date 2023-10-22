@@ -18,6 +18,20 @@
     ClothingHeadHelmetVoidParamed: 1
     ClothingOuterHardsuitVoidParamed: 1
     ClothingOuterHospitalGown: 5
-    UniformScrubsColorGreen: 4
-    UniformScrubsColorBlue: 4
-    UniformScrubsColorPurple: 4
+    UniformScrubsColorBlack: 1
+    ClothingHeadHatSurgcapBlack: 1
+    UniformScrubsColorBlue: 1
+    ClothingHeadHatSurgcapBlue: 1
+    UniformScrubsColorCyan: 1
+    ClothingHeadHatSurgcapCyan: 1
+    UniformScrubsColorGreen: 1
+    UniformHeadHatSurgcapGreen: 1
+    UniformScrubsColorPink: 1
+    UniformScrubsHeadHatSurgcapPink: 1
+    UniformScrubsColorPurple: 1
+    UniformScrubsHeadHatSurgcapPurple: 1
+    UniformScrubsColorWhite: 1
+    UniformScrubsHeadHatSurgcapWhite: 1
+  contrabandInventory:
+    UniformScrubsColorCybersun: 1
+    ClothingHeadHatSurgcapCybersun: 1
