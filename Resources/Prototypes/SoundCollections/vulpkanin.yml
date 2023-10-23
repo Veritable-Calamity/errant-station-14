@@ -1,16 +1,16 @@
 - type: soundCollection
   id: VulpkaninGrowls
   files:
-    - /Audio/Vulpikanin/growl1.ogg
-    - /Audio/Vulpikanin/growl2.ogg
-    - /Audio/Vulpikanin/growl3.ogg
+    - /Audio/Vulpkanin/growl1.ogg
+    - /Audio/Vulpkanin/growl2.ogg
+    - /Audio/Vulpkanin/growl3.ogg
 
 - type: soundCollection
   id: VulpkaninBark
   files:
-    - /Audio/Vulpikanin/bark.ogg
+    - /Audio/Vulpkanin/bark.ogg
 
 - type: soundCollection
   id: VulpkaninHowl
   files:
-    - /Audio/Vulpikanin/howl.ogg
+    - /Audio/Vulpkanin/howl.ogg

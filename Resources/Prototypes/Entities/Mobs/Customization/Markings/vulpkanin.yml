@@ -62,9 +62,9 @@
   markingCategory: HeadTop
   speciesRestriction: [Vulpkanin]
   sprites:
-    - sprite: /Mobs/Customization/Vulpkanin/ear_markings.rsi
+    - sprite: Mobs/Customization/Vulpkanin/ear_markings.rsi
       state: wolf
-    - sprite: /Mobs/Customization/Vulpkanin/ear_markings.rsi
+    - sprite: Mobs/Customization/Vulpkanin/ear_markings.rsi
       state: wolf-inner
 
 - type: marking
