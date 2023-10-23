@@ -1,0 +1,16 @@
+- type: soundCollection
+  id: VulpkaninGrowls
+  files:
+    - /Audio/Voice/Vulpkanin/growl1.ogg
+    - /Audio/Voice/Vulpkanin/growl2.ogg
+    - /Audio/Voice/Vulpkanin/growl3.ogg
+
+- type: soundCollection
+  id: VulpkaninBark
+  files:
+    - /Audio/Voice/Vulpkanin/bark.ogg
+
+- type: soundCollection
+  id: VulpkaninHowl
+  files:
+    - /Audio/Voice/Vulpkanin/howl.ogg
