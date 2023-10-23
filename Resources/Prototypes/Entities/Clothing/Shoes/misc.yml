@@ -11,14 +11,14 @@
 
 - type: entity
   parent: ClothingShoesBase
-  id: ClothingShoesClothwarp
+  id: ClothingShoesClothwrap
   name: cloth footwraps
   description: A roll of treated canvas used for wrapping claws or paws.
   components:
     - type: Sprite
-      sprite: Clothing/Shoes/Misc/clothwarp.rsi
+      sprite: Clothing/Shoes/Misc/clothwrap.rsi
     - type: Clothing
-      sprite: Clothing/Shoes/Misc/clothwarp.rsi
+      sprite: Clothing/Shoes/Misc/clothwrap.rsi
 
 - type: entity
   parent: ClothingShoesBaseButcherable
