@@ -30,6 +30,9 @@
       sprite: Clothing/Eyes/Hud/medhudglasses.rsi
     - type: Clothing
       sprite: Clothing/Eyes/Hud/medhudglasses.rsi
+    - type: FlashImmunity
+    - type: EyeProtection
+      protectionTime: 5
 
 - type: entity
   parent: ClothingEyesBase
