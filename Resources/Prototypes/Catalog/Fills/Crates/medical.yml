@@ -57,8 +57,6 @@
   components:
   - type: StorageFill
     contents:
-  - type: StorageFill
-    contents:
       - id: UniformScrubsColorGreen
       - id: UniformScrubsColorBlue
       - id: UniformScrubsColorCyan
