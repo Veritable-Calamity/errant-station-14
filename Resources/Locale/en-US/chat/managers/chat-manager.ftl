@@ -110,3 +110,8 @@ chat-speech-verb-ghost-1 = complains
 chat-speech-verb-ghost-2 = breathes
 chat-speech-verb-ghost-3 = hums
 chat-speech-verb-ghost-4 = mutters
+
+chat-speech-verb-vulpkanin-1 = rawrs
+chat-speech-verb-vulpkanin-2 = barks
+chat-speech-verb-vulpkanin-3 = rurs
+chat-speech-verb-vulpkanin-4 = yeeps
