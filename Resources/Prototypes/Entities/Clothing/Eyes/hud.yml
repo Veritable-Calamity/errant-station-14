@@ -34,6 +34,21 @@
 
 - type: entity
   parent: ClothingEyesBase
+  id: ClothingEyesHudSecuritySunglasses
+  name: security hud sunglasses
+  description: A heads-up display that scans the humanoids in view and provides accurate data about their ID status and security records. Integrated with a pair of sunglasses that protect from flashes.
+  components:
+  - type: Sprite
+    sprite: Clothing/Eyes/Hud/secglasses.rsi
+  - type: Clothing
+    sprite: Clothing/Eyes/Hud/secglasses.rsi
+  - type: FlashImmunity
+  - type: EyeProtection
+    protectionTime: 5
+  - type: ShowSecurityIcons
+
+- type: entity
+  parent: ClothingEyesBase
   id: ClothingEyesHudBeer
   name: beer goggles
   description: A pair of sunHud outfitted with apparatus to scan reagents, as well as providing an innate understanding of liquid viscosity while in motion.
