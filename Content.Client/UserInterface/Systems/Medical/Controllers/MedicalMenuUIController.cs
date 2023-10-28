@@ -15,7 +15,9 @@ namespace Content.Client.UserInterface.Systems.Medical.Controllers;
 public sealed class MedicalMenuUIController: UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>,
     IOnSystemChanged<WoundSystem>
 {
-    private MedicalWindow? _window;
+    private MedicalWindow? _selfMedicalWindow;
+    private MedicalWindow? _targetMedicalWindow;
+    private bool _targetingSelf = true;
     private MenuButton? MedicalButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.MedicalButton;
     public void LoadButton()
     {
@@ -43,7 +45,7 @@ public sealed class MedicalMenuUIController: UIController, IOnStateEntered<Gamep
 
     public void OnStateEntered(GameplayState state)
     {
-        EnsureWindow();
+        EnsureWindows();
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.OpenMedicalMenu,
                 InputCmdHandler.FromDelegate(_ => ToggleWindow()))
@@ -52,64 +54,99 @@ public sealed class MedicalMenuUIController: UIController, IOnStateEntered<Gamep
 
     private void ToggleWindow()
     {
-        if (_window == null)
-            return;
-        if (_window.IsOpen)
+        if (_targetingSelf)
         {
-            _window.Close();
+            _targetMedicalWindow?.Close();
+            if (_selfMedicalWindow == null)
+                return;
+            _selfMedicalWindow.CommonStatus.UpdateTarget("John Smith", "TimeLord", true);
+            if (!_selfMedicalWindow!.IsOpen)
+            {
+                _selfMedicalWindow.Open();
+            }
+            else
+            {
+                _selfMedicalWindow.Close();
+            }
         }
         else
         {
-            _window.Open();
+            _selfMedicalWindow?.Close();
+            if (_targetMedicalWindow == null)
+                return;
+            _targetMedicalWindow.CommonStatus.UpdateTarget("Martha Jones", "Human", false);
+            if (!_targetMedicalWindow!.IsOpen)
+            {
+                _targetMedicalWindow.Open();
+            }
+            else
+            {
+                _targetMedicalWindow.Close();
+            }
         }
     }
 
-    private void OnWindowOpen()
+    private void OnMedicalWindowOpen()
     {
         if (MedicalButton == null)
             return;
         MedicalButton.Pressed = true;
     }
 
-    private void OnWindowClosed()
+    private void OnMedicalWindowClosed()
     {
         if (MedicalButton == null)
             return;
         MedicalButton.Pressed = false;
     }
 
-    private void EnsureWindow()
+    private void EnsureWindows()
     {
-        if (_window != null)
+        if (_selfMedicalWindow == null)
+        {
+            _selfMedicalWindow = UIManager.CreateWindow<MedicalWindow>();
+            _selfMedicalWindow.OnOpen += OnMedicalWindowOpen;
+            _selfMedicalWindow.OnClose += OnMedicalWindowClosed;
+        }
+
+        if (_targetMedicalWindow != null)
             return;
-        _window = UIManager.CreateWindow<MedicalWindow>();
-        _window.OnOpen += OnWindowOpen;
-        _window.OnClose += OnWindowClosed;
+        _targetMedicalWindow = UIManager.CreateWindow<MedicalWindow>();
+        _targetMedicalWindow.OnOpen += OnMedicalWindowOpen;
+        _targetMedicalWindow.OnClose += OnMedicalWindowClosed;
     }
 
-    private void ClearWindow()
+    private void ClearWindows()
     {
-        if (_window == null)
-            return;
-        _window.Close();
-        _window.OnClose -= OnWindowClosed;
-        _window.OnOpen -= OnWindowOpen;
-        _window.Dispose();
+        if (_selfMedicalWindow != null)
+        {
+            _selfMedicalWindow.Close();
+            _selfMedicalWindow.OnClose -= OnMedicalWindowClosed;
+            _selfMedicalWindow.OnOpen -= OnMedicalWindowOpen;
+            _selfMedicalWindow.Dispose();
+        }
+        if (_targetMedicalWindow != null)
+        {
+            _targetMedicalWindow.Close();
+            _targetMedicalWindow.OnClose -= OnMedicalWindowClosed;
+            _targetMedicalWindow.OnOpen -= OnMedicalWindowOpen;
+            _targetMedicalWindow.Dispose();
+        }
     }
 
     public void OnStateExited(GameplayState state)
     {
         CommandBinds.Unregister<MedicalMenuUIController>();
-        ClearWindow();
+        ClearWindows();
     }
 
     public void OnSystemLoaded(WoundSystem system)
     {
-        EnsureWindow();
+        EnsureWindows();
     }
 
     public void OnSystemUnloaded(WoundSystem system)
     {
-        ClearWindow();
+        ClearWindows();
     }
 }

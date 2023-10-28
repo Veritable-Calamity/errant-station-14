@@ -12,5 +12,9 @@ public sealed partial class MedicalWindow : DefaultWindow
     {
         RobustXamlLoader.Load(this);
         LayoutContainer.SetAnchorAndMarginPreset(this, LayoutContainer.LayoutPreset.Center);
+        TabContainer.SetTabTitle(OverviewTab, "Overview");
+        TabContainer.SetTabTitle(TriageTab, "Triage");
+        TabContainer.SetTabTitle(SurgeryTab, "Surgery");
+        Tabs.CurrentTab = 0;
     }
 }

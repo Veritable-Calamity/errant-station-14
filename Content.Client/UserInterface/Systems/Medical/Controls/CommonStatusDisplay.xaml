@@ -1,0 +1,54 @@
+﻿<controls:CommonStatusDisplay
+    xmlns="https://spacestation14.io"
+    xmlns:controls= "clr-namespace:Content.Client.UserInterface.Systems.Medical.Controls"
+    xmlns:controls1="clr-namespace:Content.Client.UserInterface.Controls"
+    Name="CommonMedicalStatus"
+    HorizontalExpand="True"
+    VerticalExpand="False"
+    Align="Center"
+>
+    <BoxContainer Orientation="Horizontal" Align="End" HorizontalExpand="True" HorizontalAlignment="Stretch">
+        <BoxContainer Orientation="Horizontal" Align="Center" HorizontalExpand="True" HorizontalAlignment="Stretch">
+
+        <BoxContainer Orientation="Vertical" HorizontalAlignment="Left">
+            <BoxContainer Orientation="Horizontal" Align="Center">
+                <Label Text="Target: "/>
+                <Label Name="TargetName" Access="Private" Text="Unknown"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Horizontal" Align="Center">
+                <Label Text="Species: "/>
+                <Label Name="TargetSpecies" Access="Private" Text="Unknown"/>
+            </BoxContainer>
+        </BoxContainer>
+        <controls1:VSpacer Spacing="10"/>
+        <BoxContainer Orientation="Vertical" HorizontalAlignment="Center">
+            <BoxContainer Orientation="Horizontal" Align="Center">
+                <Label Text="Condition: "/>
+                <Label Name="Condition" Text="Unknown"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Horizontal" Access="Private" Align="Center">
+                <Label Text="Pulse: "/>
+                <Label Name="Pulse" Text="???"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Horizontal" Align="Center">
+                <Label Text="Breathing: "/>
+                <Label Name="Breathing" Text="???" Align="Center"/>
+            </BoxContainer>
+        </BoxContainer>
+        </BoxContainer>
+        <controls1:HSpacer/>
+        <Button HorizontalAlignment="Right" VerticalExpand="False">
+            <BoxContainer Align="Center" Orientation="Horizontal">
+                <Label Text="Guide: " HorizontalAlignment="Left"/>
+                <TextureRect
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    VerticalExpand="False"
+                    HorizontalExpand="False"
+                    MinSize="42 64"
+                    TexturePath="/Textures/Interface/VerbIcons/information.svg.192dpi.png"
+                />
+            </BoxContainer>
+        </Button>
+        </BoxContainer>
+</controls:CommonStatusDisplay>

@@ -30,6 +30,7 @@ public partial class WoundSystem
     {
         if (args.Current is not WoundableComponentState state)
             return;
+        component.Visibility = state.Visibility;
         component.HitPoints = state.HitPoints;
         component.HitPointCap = state.HitPointCap;
         component.HitPointCapMax = state.HitPointCapMax;
@@ -53,6 +54,7 @@ public partial class WoundSystem
         var state = new WoundableComponentState
         {
             HitPoints = component.HitPoints,
+            Visibility =  component.Visibility,
             HitPointCap = component.HitPointCap,
             HitPointCapMax = component.HitPointCapMax,
             Integrity = component.Integrity,

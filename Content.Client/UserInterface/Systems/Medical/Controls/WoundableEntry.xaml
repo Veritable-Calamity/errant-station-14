@@ -1,0 +1,18 @@
+﻿<controls:WoundableEntry
+    xmlns="https://spacestation14.io"
+    xmlns:controls= "clr-namespace:Content.Client.UserInterface.Systems.Medical.Controls"
+    xmlns:controls1="clr-namespace:Content.Client.UserInterface.Controls"
+    Name="CommonMedicalStatus"
+    HorizontalExpand="True"
+    VerticalExpand="False"
+    Orientation="Vertical"
+>
+    <controls1:VSpacer Size="10"/>
+    <PanelContainer>
+        <BoxContainer Orientation="Horizontal" Align="Center">
+            <Label Name = "WoundableName" Text = "Unknown Woundable"/>
+            <Label Text="Condition: "/>
+            <Label Name = "Severity" Text = "Unknown"/>
+        </BoxContainer>
+    </PanelContainer>
+</controls:WoundableEntry>

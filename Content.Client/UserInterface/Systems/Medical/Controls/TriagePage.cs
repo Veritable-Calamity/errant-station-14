@@ -2,7 +2,7 @@
 
 namespace Content.Client.UserInterface.Systems.Medical.Controls;
 
-public sealed class TreatmentsPage : Control
+public sealed class TriagePage : Control
 {
 
 }

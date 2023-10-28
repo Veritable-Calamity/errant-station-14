@@ -14,6 +14,9 @@ public sealed partial class WoundableComponent : Component //Component that hold
     [ViewVariables, AutoNetworkedField] public EntityUid? ParentWoundable;
     [ViewVariables, AutoNetworkedField] public EntityUid RootWoundable;
     [ViewVariables, AutoNetworkedField] public HashSet<EntityUid> ChildWoundables = new();
+    [ViewVariables,  DataField("visibility")]
+    public WoundableVisibility Visibility = WoundableVisibility.Always;
+
     /// <summary>
     /// Should we allow wounds to be created on this woundable. This is usually set to false on root woundables ie: body entity.
     /// This is also useful if you want to have an unwoundable part between woundable parts to relay damage across!
@@ -70,6 +73,7 @@ public sealed partial class WoundableComponent : Component //Component that hold
 [Serializable, NetSerializable]
 public sealed class WoundableComponentState : ComponentState
 {
+    public WoundableVisibility Visibility = default!;
     public NetEntity? ParentWoundable = default!;
     public NetEntity RootWoundable = default!;
     public HashSet<NetEntity> ChildWoundables = default!;
@@ -83,4 +87,12 @@ public sealed class WoundableComponentState : ComponentState
     public FixedPoint2 IntegrityCapMax = default!;
     public FixedPoint2 IntegrityCap = default!;
     public FixedPoint2 Integrity = default!;
+}
+
+[Serializable, NetSerializable]
+public enum WoundableVisibility
+{
+    Always,
+    HandScanner,
+    AdvancedScanner
 }
