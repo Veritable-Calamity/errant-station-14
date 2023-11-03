@@ -58,11 +58,33 @@
   - type: StorageFill
     contents:
       - id: UniformScrubsColorGreen
-      - id: UniformScrubsColorPurple
+        amount: 1
       - id: UniformScrubsColorBlue
-      - id: ClothingHeadHatSurgcapBlue
-      - id: ClothingHeadHatSurgcapPurple
+        amount: 1
+      - id: UniformScrubsColorCyan
+        amount: 1
+      - id: UniformScrubsColorPurple
+        amount: 1
+      - id: UniformScrubsColorBlack
+        amount: 1
+      - id: UniformScrubsColorPink
+        amount: 1
+      - id: UniformScrubsColorWhite
+        amount: 1
       - id: ClothingHeadHatSurgcapGreen
+        amount: 1
+      - id: ClothingHeadHatSurgcapBlue
+        amount: 1
+      - id: ClothingHeadHatSurgcapCyan
+        amount: 1
+      - id: ClothingHeadHatSurgcapPurple
+        amount: 1
+      - id: ClothingHeadHatSurgcapBlack
+        amount: 1
+      - id: ClothingHeadHatSurgcapPink
+        amount: 1
+      - id: ClothingHeadHatSurgcapWhite
+        amount: 1
       - id: ClothingMaskSterile
         amount: 3
 

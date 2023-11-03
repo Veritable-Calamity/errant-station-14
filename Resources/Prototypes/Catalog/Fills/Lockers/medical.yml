@@ -47,26 +47,51 @@
         prob: 0.6
       - id: ClothingHandsGlovesLatex
       - id: ClothingHeadsetMedical
-     # - id: ClothingEyesHudMedical #Removed until working properly
       - id: ClothingBeltMedical
       - id: ClothingHeadHatSurgcapGreen
-        prob: 0.1
+        prob: 0.16
         orGroup: Surgcaps
       - id: ClothingHeadHatSurgcapPurple
-        prob: 0.05
+        prob: 0.16
         orGroup: Surgcaps
       - id: ClothingHeadHatSurgcapBlue
-        prob: 0.90
+        prob: 0.16
+        orGroup: Surgcaps
+      - id: ClothingHeadHatSurgcapCyan
+        prob: 0.16
+        orGroup: Surgcaps
+      - id: ClothingHeadHatSurgcapBlack
+        prob: 0.16
+        orGroup: Surgcaps
+      - id: ClothingHeadHatSurgcapPink
+        prob: 0.16
+        orGroup: Surgcaps
+      - id: ClothingHeadHatSurgcapWhite
+        prob: 0.16
         orGroup: Surgcaps
       - id: UniformScrubsColorBlue
-        prob: 0.5
-        orGroup: Surgshrubs
+        prob: 0.16
+        orGroup: Surgscrubs
       - id: UniformScrubsColorGreen
-        prob: 0.1
-        orGroup: Surgshrubs
+        prob: 0.16
+        orGroup: Surgscrubs
       - id: UniformScrubsColorPurple
-        prob: 0.05
-        orGroup: Surgshrubs
+        prob: 0.16
+        orGroup: Surgscrubs
+      - id: UniformScrubsColorCyan
+        prob: 0.16
+        orGroup: Surgscrubs
+      - id: UniformScrubsColorBlack
+        prob: 0.16
+        orGroup: Surgscrubs
+      - id: UniformScrubsColorPink
+        prob: 0.16
+        orGroup: Surgscrubs
+      - id: UniformScrubsColorWhite
+        prob: 0.16
+        orGroup: Surgscrubs
+      - id: NitrousOxideTankFilled
+        prob: 0.3
       - id: ClothingMaskSterile
 
 - type: entity
@@ -81,7 +106,7 @@
         prob: 0.6
       - id: ClothingHandsGlovesLatex
       - id: ClothingHeadsetMedical
-     # - id: ClothingEyesHudMedical #Removed until working properly
+      - id: ClothingEyesHudMedical
       - id: ClothingBeltMedical
       - id: ClothingHeadHatSurgcapGreen
         prob: 0.1
@@ -94,13 +119,13 @@
         orGroup: Surgcaps
       - id: UniformScrubsColorBlue
         prob: 0.5
-        orGroup: Surgshrubs
+        orGroup: Surgscrubs
       - id: UniformScrubsColorGreen
         prob: 0.1
-        orGroup: Surgshrubs
+        orGroup: Surgscrubs
       - id: UniformScrubsColorPurple
         prob: 0.05
-        orGroup: Surgshrubs
+        orGroup: Surgscrubs
       - id: ClothingMaskSterile
 
 - type: entity

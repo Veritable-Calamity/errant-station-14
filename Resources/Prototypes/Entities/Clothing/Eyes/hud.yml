@@ -22,6 +22,20 @@
 
 - type: entity
   parent: ClothingEyesBase
+  id: ClothingEyesHudMedicalSunglasses
+  name: medical hud
+  description: A heads-up display that scans the humanoids in view and provides accurate data about their health status. Integrated with a pair of sunglasses that protect from flashes.
+  components:
+    - type: Sprite
+      sprite: Clothing/Eyes/Hud/medhudglasses.rsi
+    - type: Clothing
+      sprite: Clothing/Eyes/Hud/medhudglasses.rsi
+    - type: FlashImmunity
+    - type: EyeProtection
+      protectionTime: 5
+
+- type: entity
+  parent: ClothingEyesBase
   id: ClothingEyesHudSecurity
   name: security hud
   description: A heads-up display that scans the humanoids in view and provides accurate data about their ID status and security records.
@@ -30,6 +44,21 @@
     sprite: Clothing/Eyes/Hud/sec.rsi
   - type: Clothing
     sprite: Clothing/Eyes/Hud/sec.rsi
+  - type: ShowSecurityIcons
+
+- type: entity
+  parent: ClothingEyesBase
+  id: ClothingEyesHudSecuritySunglasses
+  name: security hud sunglasses
+  description: A heads-up display that scans the humanoids in view and provides accurate data about their ID status and security records. Integrated with a pair of sunglasses that protect from flashes.
+  components:
+  - type: Sprite
+    sprite: Clothing/Eyes/Hud/sechudglasses.rsi
+  - type: Clothing
+    sprite: Clothing/Eyes/Hud/sechudglasses.rsi
+  - type: FlashImmunity
+  - type: EyeProtection
+    protectionTime: 5
   - type: ShowSecurityIcons
 
 - type: entity
