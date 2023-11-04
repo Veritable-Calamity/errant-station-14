@@ -22,9 +22,9 @@
 
 - type: entity
   parent: ClothingNeckBase
-  id: ClothingNeckCaptaincymedal
+  id: ClothingNeckGoldmedal
   name: medal of captaincy
-  description: Given to crewmates who demonstate exceptional crewmanship.
+  description: Given to crewmates who demonstrate exceptional crewmanship.
   components:
   - type: Sprite
     sprite: Clothing/Neck/Medals/gold.rsi
