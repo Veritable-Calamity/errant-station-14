@@ -526,7 +526,7 @@
       - Zipties
       - Stunbaton
       - ForensicPad
-      - ClothingEyesGlassesSecurity
+      - ClothingEyesGlassesSunglasses
       - RiotShield
       - ShellShotgun
       - ShellShotgunFlare
@@ -553,6 +553,7 @@
       - CartridgeMagnumRubber
       - CartridgePistolRubber
       - CartridgeRifleRubber
+      - ClothingEyesHudGlassesSecurity
       - ExplosivePayload
       - FlashPayload
       - HoloprojectorSecurity

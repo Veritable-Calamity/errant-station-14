@@ -16,7 +16,7 @@
   Security and [color=#a4885c]some[/color] other members of staff have eye protection from flashbangs and flashes.
   <Box>
     <GuideEntityEmbed Entity="Flash"/>
-    <GuideEntityEmbed Entity="ClothingEyesGlassesSecurity"/>
+    <GuideEntityEmbed Entity="ClothingEyesHudGlassesSecurity"/>
     <GuideEntityEmbed Entity="GrenadeFlashBang"/>
 
   </Box>
