@@ -83,13 +83,13 @@
     Plastic: 100
 
 - type: latheRecipe
-  id: ClothingEyesGlassesSunglasses
-  result: ClothingEyesGlassesSunglasses
+  id: ClothingEyesGlassesSecurity
+  result: ClothingEyesGlassesSecurity
   completetime: 2
   materials:
     Steel: 300
     Glass: 200
-
+    
 - type: latheRecipe
   id: ClothingEyesHudSecurity
   result: ClothingEyesHudSecurity
