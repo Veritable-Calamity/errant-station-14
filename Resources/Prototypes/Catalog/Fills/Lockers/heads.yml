@@ -280,7 +280,7 @@
       - id: ClothingMaskGasSwat
       - id: ClothingBeltSecurityFilled
       - id: ClothingHeadsetAltSecurity
-      - id: ClothingEyesGlassesSecurity
+      - id: ClothingEyesHudGlassesSecurity
       - id: ClothingShoesBootsJack
       - id: CigarGoldCase
         prob: 0.50
@@ -311,7 +311,7 @@
       - id: ClothingUniformJumpsuitHoSAlt
       - id: ClothingBeltSecurityFilled
       - id: ClothingHeadsetAltSecurity
-      - id: ClothingEyesGlassesSecurity
+      - id: ClothingEyesHudGlassesSecurity
       - id: ClothingShoesBootsJack
       - id: CigarGoldCase
         prob: 0.50

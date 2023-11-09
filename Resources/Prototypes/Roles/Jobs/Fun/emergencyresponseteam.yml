@@ -19,7 +19,7 @@
     back: ClothingBackpackERTLeaderFilled
     shoes: ClothingShoesBootsCombatFilled
     head: ClothingHeadHelmetERTLeader
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterArmorBasicSlim
     id: ERTLeaderPDA
@@ -35,7 +35,7 @@
     back: ClothingBackpackERTLeaderFilled
     shoes: ClothingShoesBootsMagAdv
     mask: ClothingMaskGasERT
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitERTLeader
     suitstorage: AirTankFilled
@@ -52,7 +52,7 @@
     back: ClothingBackpackERTLeaderFilled
     shoes: ClothingShoesBootsMagAdv
     mask: ClothingMaskGasERT
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitERTLeader
     suitstorage: WeaponRifleLecter
@@ -132,7 +132,7 @@
     back: ClothingBackpackERTSecurityFilled
     shoes: ClothingShoesBootsCombatFilled
     head: ClothingHeadHelmetERTSecurity
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterArmorBasicSlim
     id: ERTLeaderPDA
@@ -148,7 +148,7 @@
     back: ClothingBackpackERTSecurityFilled
     shoes: ClothingShoesBootsMag
     mask: ClothingMaskGasERT
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitERTSecurity
     suitstorage: AirTankFilled
@@ -165,7 +165,7 @@
     back: ClothingBackpackERTSecurityFilled
     shoes: ClothingShoesBootsMag
     mask: ClothingMaskGasERT
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitERTSecurity
     suitstorage: WeaponRifleLecter

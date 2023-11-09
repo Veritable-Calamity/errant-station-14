@@ -48,7 +48,7 @@
     jumpsuit: ClothingUniformJumpsuitDeathSquad
     back: ClothingBackpackDeathSquadFilled
     mask: ClothingMaskGasDeathSquad
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     ears: ClothingHeadsetAltCentCom
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitDeathsquad
@@ -237,7 +237,7 @@
     jumpsuit: ClothingUniformJumpsuitSec
     back: ClothingBackpackSecurityFilled
     shoes: ClothingShoesBootsCombatFilled
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     head: ClothingHeadHelmetSwat
     mask: ClothingMaskGasSwat
     outerClothing: ClothingOuterArmorBasicSlim
@@ -254,7 +254,7 @@
     jumpsuit: ClothingUniformJumpsuitColorBrown
     back: ClothingBackpackDuffelCBURNFilled
     mask: ClothingMaskGasERT
-    eyes: ClothingEyesGlassesSecurity
+    eyes: ClothingEyesHudGlassesSecurity
     ears: ClothingHeadsetAltCentCom
     gloves: ClothingHandsGlovesCombat
     outerClothing: ClothingOuterHardsuitCBURN

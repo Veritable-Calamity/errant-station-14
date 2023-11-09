@@ -4,7 +4,7 @@
   - Revolutionaries are antagonists that are sponsored by the Syndicate to take over the station.
 
   ## Head Revolutionaries
-  
+
 <Box>
   <GuideEntityEmbed Entity="Flash" Caption="Flash"/>
   <GuideEntityEmbed Entity="ClothingEyesGlassesSunglasses" Caption="Sunglasses"/>
@@ -22,7 +22,7 @@
 
 <Box>
   <GuideEntityEmbed Entity="ClothingEyesGlassesSunglasses" Caption="Sunglasses"/>
-  <GuideEntityEmbed Entity="ClothingEyesGlassesSecurity" Caption="Security Sunglasses"/>
+  <GuideEntityEmbed Entity="ClothingEyesHudGlassesSecurity" Caption="Security Sunglasses"/>
   <GuideEntityEmbed Entity="ClothingHeadHatWelding" Caption="Welding Mask"/>
 </Box>
 
