@@ -3,13 +3,14 @@
   parent: BaseBorgChassisNT
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/base.rsi
     layers:
-    - state: robot
-    - state: robot_e_r
+    - state: base
+    - state: base_e_r
       map: ["enum.BorgVisualLayers.Light"]
       shader: unshaded
       visible: false
-    - state: robot_l
+    - state: base_l
       shader: unshaded
       map: ["light"]
       visible: false
@@ -18,8 +19,8 @@
     moduleWhitelist:
       tags:
       - BorgModuleGeneric
-    hasMindState: robot_e
-    noMindState: robot_e_r
+    hasMindState: base_e
+    noMindState: base_e_r
   - type: Construction
     node: cyborg
   - type: Speech
@@ -31,6 +32,7 @@
   name: salvage cyborg
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/miner.rsi
     layers:
     - state: miner
     - state: miner_e_r
@@ -77,6 +79,7 @@
   name: engineer cyborg
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/engineer.rsi
     layers:
     - state: engineer
     - state: engineer_e_r
@@ -123,6 +126,7 @@
   name: janitor cyborg
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/janitor.rsi
     layers:
     - state: janitor
     - state: janitor_e_r
@@ -169,6 +173,7 @@
   name: medical cyborg
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/medical.rsi
     layers:
     - state: medical
     - state: medical_e_r
@@ -214,6 +219,7 @@
   name: service cyborg
   components:
   - type: Sprite
+    sprite: Mobs/Silicon/Borg/service.rsi
     layers:
     - state: service
     - state: service_e_r
