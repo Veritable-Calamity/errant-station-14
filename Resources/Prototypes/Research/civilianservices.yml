@@ -121,7 +121,7 @@
   id: RoboticCleanliness
   name: research-technology-robotic-cleanliness
   icon:
-    sprite: Mobs/Silicon/chassis.rsi
+    sprite: Mobs/Silicon/Borg/janitor.rsi
     state: janitor
   discipline: CivilianServices
   tier: 2
