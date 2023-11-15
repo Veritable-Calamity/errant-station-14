@@ -51,7 +51,7 @@
   id: MechanizedTreatment
   name: research-technology-mechanized-treatment
   icon:
-    sprite: Mobs/Silicon/Borg/medical.rsi
+    sprite: Mobs/Silicon/chassis.rsi
     state: medical
   discipline: Biochemical
   tier: 1
